@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LaVaquita.Views.vModoRapido" Style="{StaticResource VaquitaPage}" Title="Modo rápido">
+    <ScrollView><VerticalStackLayout Padding="22,18,22,36" Spacing="16" MaximumWidthRequest="560" HorizontalOptions="Center">
+        <Border Style="{StaticResource VaquitaPill}"><HorizontalStackLayout Spacing="6"><Image Source="people_icon.svg" WidthRequest="17" HeightRequest="17"/><Label Text="PASO 1 DE 3" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+        <Label Text="¿Quiénes están?" Style="{StaticResource VaquitaTitle}"/>
+        <Label Text="Añade la banda y el total de la cuenta." Style="{StaticResource VaquitaSubtitle}"/>
+        <Border Style="{StaticResource VaquitaCard}">
+            <VerticalStackLayout Spacing="14">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border WidthRequest="52" HeightRequest="52" BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" Padding="11" StrokeShape="RoundRectangle 16">
+                        <Image Source="people_icon.svg"/>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="Participantes" FontSize="18" FontAttributes="Bold" TextColor="#163832"/>
+                        <Label Text="De 2 a 10 personas, separadas por coma" FontSize="11" TextColor="#6B7C78"/>
+                    </VerticalStackLayout>
+                </Grid>
+                <Border Style="{StaticResource VaquitaInputBorder}"><Entry x:Name="NombresEntry" Style="{StaticResource VaquitaEntry}" Text="Ana, Mateo, Sofi, Diego"/></Border>
+            </VerticalStackLayout>
+        </Border>
+        <Border Style="{StaticResource VaquitaCard}" BackgroundColor="#FFF1C1">
+            <VerticalStackLayout Spacing="12">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border WidthRequest="52" HeightRequest="52" BackgroundColor="White" Stroke="#163832" StrokeThickness="2" Padding="10" StrokeShape="RoundRectangle 16"><Image Source="receipt_icon.svg"/></Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"><Label Text="Total de la cuenta" FontSize="18" FontAttributes="Bold" TextColor="#163832"/><Label Text="Puedes corregirlo antes de jugar" FontSize="11" TextColor="#6B7C78"/></VerticalStackLayout>
+                </Grid>
+                <Border Style="{StaticResource VaquitaInputBorder}"><Grid ColumnDefinitions="Auto,*"><Label Text="$" FontSize="25" TextColor="#163832" VerticalTextAlignment="Center" Margin="6,0"/><Entry Grid.Column="1" x:Name="TotalEntry" Style="{StaticResource VaquitaEntry}" Keyboard="Numeric" Placeholder="84.600" FontSize="24"/></Grid></Border>
+            </VerticalStackLayout>
+        </Border>
+        <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="12" StrokeShape="RoundRectangle 14"><HorizontalStackLayout HorizontalOptions="Center" Spacing="7"><Image Source="check_icon.svg" WidthRequest="20" HeightRequest="20"/><Label Text="Sin registro y sin guardar tus datos" TextColor="#27736A" FontSize="12" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+        <Button Text="Continuar" Style="{StaticResource VaquitaButton}" Clicked="Continuar_Clicked"/>
+    </VerticalStackLayout></ScrollView>
+</ContentPage>

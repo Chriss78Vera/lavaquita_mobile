@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             x:Class="LaVaquita.Views.vResultado" Style="{StaticResource VaquitaPage}" Title="Resultado">
+    <Grid>
+        <shapes:Ellipse Fill="#F4FFBE" WidthRequest="230" HeightRequest="230" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="-120" TranslationY="-110" Opacity="0.7"/>
+        <ScrollView><VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
+            <Grid HeightRequest="190">
+                <BoxView Color="#24D6C8" WidthRequest="8" HeightRequest="18" CornerRadius="2" Rotation="24" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="55" TranslationY="25"/>
+                <BoxView Color="#FF8A5B" WidthRequest="8" HeightRequest="18" CornerRadius="2" Rotation="-30" HorizontalOptions="End" VerticalOptions="Start" TranslationX="-45" TranslationY="35"/>
+                <BoxView Color="#6D8DFF" WidthRequest="8" HeightRequest="18" CornerRadius="2" Rotation="45" HorizontalOptions="Start" VerticalOptions="End" TranslationX="75" TranslationY="-18"/>
+                <BoxView Color="#B8F340" WidthRequest="8" HeightRequest="18" CornerRadius="2" Rotation="-15" HorizontalOptions="End" VerticalOptions="End" TranslationX="-65" TranslationY="-22"/>
+                <Image x:Name="HeroImage" Source="vaquita_mascot.svg" HeightRequest="180" WidthRequest="180" HorizontalOptions="Center"/>
+            </Grid>
+            <Border Style="{StaticResource VaquitaPill}"><Label x:Name="EyebrowLabel" Text="LA SUERTE HABLÓ" TextColor="#27736A" FontSize="10" FontAttributes="Bold"/></Border>
+            <Label x:Name="TituloLabel" Style="{StaticResource VaquitaTitle}"/>
+            <Label x:Name="SubtituloLabel" Style="{StaticResource VaquitaSubtitle}"/>
+            <VerticalStackLayout x:Name="DetallesLayout" Spacing="12" Margin="0,5,0,0"/>
+            <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="12" StrokeShape="RoundRectangle 14"><Grid ColumnDefinitions="Auto,*" ColumnSpacing="10"><Image Source="sync_icon.svg" WidthRequest="25" HeightRequest="25"/><VerticalStackLayout Grid.Column="1"><Label Text="Resultado sincronizado" FontAttributes="Bold" TextColor="#27736A"/><Label Text="Todos en la sala pueden verlo" FontSize="10" TextColor="#27736A"/></VerticalStackLayout></Grid></Border>
+            <Button x:Name="DesempateButton" Text="Lanzar desempate" ImageSource="dice_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaSecondaryButton}" IsVisible="False" Clicked="Desempate_Clicked"/>
+            <Button Text="Nueva vaquita" ImageSource="refresh_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaDarkButton}" Clicked="Nueva_Clicked"/>
+            <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
+        </VerticalStackLayout></ScrollView>
+    </Grid>
+</ContentPage>

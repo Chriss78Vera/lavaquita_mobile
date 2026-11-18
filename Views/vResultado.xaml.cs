@@ -1,0 +1,105 @@
+using LaVaquita.Models;
+using LaVaquita.Services;
+
+namespace LaVaquita.Views;
+
+public partial class vResultado : ContentPage
+{
+    private readonly VaquitaApi _api;
+    private readonly AppSession _session;
+
+    public vResultado(VaquitaApi api, AppSession session)
+    {
+        InitializeComponent(); _api = api; _session = session; Mostrar();
+    }
+
+    private void Mostrar()
+    {
+        var result = _session.UltimoResultado;
+        if (result is null) return;
+        TituloLabel.Text = result.Titulo; SubtituloLabel.Text = result.Subtitulo; DetallesLayout.Children.Clear();
+        EyebrowLabel.Text = result.Tipo switch
+        {
+            TipoResultado.Division => "LISTO, FACILITO",
+            TipoResultado.Ruleta => "LA SUERTE HABLÓ",
+            TipoResultado.Empate => "MUERTE SÚBITA",
+            _ => "LOS DADOS DECIDIERON"
+        };
+        HeroImage.Source = result.Tipo switch
+        {
+            TipoResultado.Ruleta => "roulette.svg",
+            TipoResultado.Dados or TipoResultado.Empate => "dice_big.svg",
+            _ => "vaquita_mascot.svg"
+        };
+        foreach (var item in result.Detalles)
+        {
+            var row = new Grid
+            {
+                ColumnDefinitions = { new ColumnDefinition(55), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) },
+                ColumnSpacing = 10
+            };
+            row.Add(new Border
+            {
+                WidthRequest = 48, HeightRequest = 48, Padding = 0,
+                BackgroundColor = result.Tipo == TipoResultado.Dados ? Color.FromArgb("#FFD84D") : Color.FromArgb("#B8F340"),
+                Stroke = Color.FromArgb("#163832"), StrokeThickness = 2,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 },
+                Content = new Label { Text = item.Nombre[..1].ToUpperInvariant(), FontSize = 20, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#163832"), HorizontalTextAlignment = TextAlignment.Center, VerticalTextAlignment = TextAlignment.Center }
+            }, 0);
+            row.Add(new VerticalStackLayout
+            {
+                VerticalOptions = LayoutOptions.Center,
+                Children =
+                {
+                    new Label { Text = item.Nombre, TextColor = Color.FromArgb("#163832"), FontSize = 17, FontAttributes = FontAttributes.Bold },
+                    new Label { Text = item.Dados.Count > 0 ? $"Dados: {string.Join(" + ", item.Dados)}" : "Cuenta asignada", TextColor = Color.FromArgb("#6B7C78"), FontSize = 10 }
+                }
+            }, 1);
+            row.Add(new Label { Text = item.MontoTexto, TextColor = Color.FromArgb("#287C70"), FontSize = 16, FontAttributes = FontAttributes.Bold, VerticalTextAlignment = TextAlignment.Center }, 2);
+            DetallesLayout.Children.Add(new Border
+            {
+                BackgroundColor = Colors.White, Stroke = Color.FromArgb("#163832"), StrokeThickness = 2, Padding = 11,
+                Shadow = new Shadow { Brush = new SolidColorBrush(Color.FromArgb("#163832")), Offset = new Point(3, 4), Radius = 0, Opacity = 1 },
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 18 }, Content = row
+            });
+        }
+        DesempateButton.IsVisible = result.Tipo == TipoResultado.Empate && (!_session.EsCompartida || _session.EsAnfitrion);
+    }
+
+    private async void Desempate_Clicked(object? sender, EventArgs e)
+    {
+        var ids = _session.UltimoResultado?.Detalles.Select(item => item.ParticipanteId).ToArray() ?? [];
+        Cargando.IsVisible = Cargando.IsRunning = true;
+        try
+        {
+            if (_session.EsCompartida)
+                _session.UltimoResultado = await _api.DadosAsync(_session.CodigoSala, _session.HostToken, ids);
+            else
+            {
+                var participants = _session.Participantes.Where(item => ids.Contains(item.Id)).ToList();
+                var rolls = participants.Select(person => (person, roll: Random.Shared.Next(1, 7))).ToList();
+                var high = rolls.Max(item => item.roll); var winners = rolls.Where(item => item.roll == high).ToList();
+                _session.UltimoResultado = new ResultadoJuego
+                {
+                    Tipo = winners.Count > 1 ? TipoResultado.Empate : TipoResultado.Dados,
+                    Titulo = winners.Count > 1 ? "¡Tenemos empate!" : "Los dados decidieron",
+                    Subtitulo = winners.Count > 1 ? "Vuelvan a lanzar" : "Hoy invita",
+                    Detalles = winners.Select(item => new DetallePago { ParticipanteId = item.person.Id, Nombre = item.person.Nombre, Dados = [item.roll], Descripcion = $"Resultado: {item.roll}" }).ToList()
+                };
+            }
+            Mostrar();
+        }
+        catch (Exception error) { await DisplayAlertAsync("No se pudo desempatar", error.Message, "Aceptar"); }
+        finally { Cargando.IsVisible = Cargando.IsRunning = false; }
+    }
+
+    private async void Nueva_Clicked(object? sender, EventArgs e)
+    {
+        if (_session.EsCompartida && _session.EsAnfitrion && !string.IsNullOrWhiteSpace(_session.CodigoSala))
+        {
+            try { await _api.CerrarSalaAsync(_session.CodigoSala, _session.HostToken); }
+            catch { /* La sala también expirará automáticamente si no hay conexión. */ }
+        }
+        _session.Reiniciar(); await Navigation.PopToRootAsync();
+    }
+}
