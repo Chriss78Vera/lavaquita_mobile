@@ -1,3 +1,5 @@
+using LaVaquita.Utils;
+
 namespace LaVaquita.Models;
 
 public enum TipoResultado
@@ -23,5 +25,5 @@ public class DetallePago
     public decimal? Monto { get; set; }
     public List<int> Dados { get; set; } = [];
     public string Descripcion { get; set; } = string.Empty;
-    public string MontoTexto => Monto.HasValue ? $"{Monto.Value:N2} COP" : Descripcion;
+    public string MontoTexto => Monto.HasValue ? MoneyFormat.Format(Monto.Value) : Descripcion;
 }

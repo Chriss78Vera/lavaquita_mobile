@@ -1,5 +1,6 @@
 using LaVaquita.Models;
 using LaVaquita.Services;
+using LaVaquita.Utils;
 
 namespace LaVaquita.Views;
 
@@ -11,8 +12,8 @@ public partial class vJuegos : ContentPage
     public vJuegos(VaquitaApi api, AppSession session)
     {
         InitializeComponent(); _api = api; _session = session;
-        ResumenLabel.Text = $"Cuenta de {session.Cuenta.Total:N2} {session.Cuenta.Moneda} · {session.Participantes.Count} personas";
-        DivisionHintLabel.Text = $"Aprox. {session.Cuenta.Total / Math.Max(1, session.Participantes.Count):N2} por persona";
+        ResumenLabel.Text = $"Cuenta de {MoneyFormat.Format(session.Cuenta.Total, session.Cuenta.Moneda)} · {session.Participantes.Count} personas";
+        DivisionHintLabel.Text = $"Aprox. {MoneyFormat.Format(session.Cuenta.Total / Math.Max(1, session.Participantes.Count), session.Cuenta.Moneda)} por persona";
         if (session.EsCompartida && !session.EsAnfitrion)
         {
             DividirCard.IsVisible = RuletaCard.IsVisible = DadosCard.IsVisible = false; EsperaPanel.IsVisible = true;
@@ -21,6 +22,11 @@ public partial class vJuegos : ContentPage
 
     private async void Dividir_Clicked(object? sender, EventArgs e)
     {
+        if (_session.Participantes.Count <= 2)
+        {
+            await DisplayAlertAsync("Faltan participantes", "Para dividir la cuenta necesitas al menos 3 jugadores.", "Aceptar");
+            return;
+        }
         await Ejecutar(async () =>
         {
             _session.UltimoResultado = _session.EsCompartida
@@ -28,6 +34,8 @@ public partial class vJuegos : ContentPage
                 : DividirLocal();
         });
     }
+
+    private void DividirCard_Tapped(object? sender, TappedEventArgs e) => Dividir_Clicked(sender, e);
 
     private ResultadoJuego DividirLocal()
     {
@@ -43,43 +51,17 @@ public partial class vJuegos : ContentPage
 
     private async void Ruleta_Clicked(object? sender, EventArgs e)
     {
-        var max = Math.Max(1, _session.Participantes.Count - 1);
-        var answer = await DisplayPromptAsync("Ruleta", $"¿Cuántas personas pagan? 1 a {max}", "Girar", "Cancelar", keyboard: Keyboard.Numeric, initialValue: "1");
-        if (!int.TryParse(answer, out var count) || count < 1 || count > max) return;
-        await Ejecutar(async () =>
-        {
-            if (_session.EsCompartida) _session.UltimoResultado = await _api.RuletaAsync(_session.CodigoSala, _session.HostToken, count);
-            else
-            {
-                var payers = _session.Participantes.OrderBy(_ => Random.Shared.Next()).Take(count).ToList();
-                _session.UltimoResultado = new ResultadoJuego
-                {
-                    Tipo = TipoResultado.Ruleta, Titulo = "La suerte habló", Subtitulo = "Ellos pagan esta vez",
-                    Detalles = payers.Select(person => new DetallePago { ParticipanteId = person.Id, Nombre = person.Nombre, Monto = _session.Cuenta.Total / count }).ToList()
-                };
-            }
-        });
+        await Navigation.PushAsync(new vRuleta(_api, _session));
     }
+
+    private void RuletaCard_Tapped(object? sender, TappedEventArgs e) => Ruleta_Clicked(sender, e);
 
     private async void Dados_Clicked(object? sender, EventArgs e)
     {
-        await Ejecutar(async () =>
-        {
-            if (_session.EsCompartida) _session.UltimoResultado = await _api.DadosAsync(_session.CodigoSala, _session.HostToken);
-            else
-            {
-                var rolls = _session.Participantes.Select(person => (person, roll: Random.Shared.Next(1, 7))).ToList();
-                var high = rolls.Max(item => item.roll); var winners = rolls.Where(item => item.roll == high).ToList();
-                _session.UltimoResultado = new ResultadoJuego
-                {
-                    Tipo = winners.Count > 1 ? TipoResultado.Empate : TipoResultado.Dados,
-                    Titulo = winners.Count > 1 ? "¡Tenemos empate!" : "Los dados decidieron",
-                    Subtitulo = winners.Count > 1 ? "Vuelvan a lanzar" : "Hoy invita",
-                    Detalles = winners.Select(item => new DetallePago { ParticipanteId = item.person.Id, Nombre = item.person.Nombre, Dados = [item.roll], Descripcion = $"Resultado: {item.roll}" }).ToList()
-                };
-            }
-        });
+        await Navigation.PushAsync(new vDados(_api, _session));
     }
+
+    private void DadosCard_Tapped(object? sender, TappedEventArgs e) => Dados_Clicked(sender, e);
 
     private async Task Ejecutar(Func<Task> action)
     {

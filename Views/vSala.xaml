@@ -14,30 +14,31 @@
                 <Image x:Name="QrImage" HeightRequest="180" WidthRequest="180" HorizontalOptions="Center"/>
                 <Label Text="CÓDIGO DE LA SALA" Style="{StaticResource VaquitaEyebrow}"/>
                 <Label x:Name="CodigoGrandeLabel" FontSize="28" FontAttributes="Bold" TextColor="#163832" CharacterSpacing="3" HorizontalTextAlignment="Center"/>
+                <Button Text="Copiar código" ImageSource="copy_icon.png" ContentLayout="Left,8" Style="{StaticResource VaquitaSecondaryButton}" Clicked="CopiarCodigo_Clicked"/>
             </VerticalStackLayout>
         </Border>
         <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never"><HorizontalStackLayout x:Name="ParticipantesLayout" Spacing="10" Padding="2,3,8,8"/></ScrollView>
         <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="12" StrokeShape="RoundRectangle 14">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10"><Image Source="sync_icon.svg" WidthRequest="29" HeightRequest="29"/><VerticalStackLayout Grid.Column="1"><Label Text="Todo sincronizado" FontAttributes="Bold" TextColor="#27736A"/><Label Text="Los juegos empezarán para todos a la vez" FontSize="10" TextColor="#27736A"/></VerticalStackLayout></Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10"><Image Source="sync_icon.png" WidthRequest="29" HeightRequest="29"/><VerticalStackLayout Grid.Column="1"><Label Text="Todo sincronizado" FontAttributes="Bold" TextColor="#27736A"/><Label Text="Los juegos empezarán para todos a la vez" FontSize="10" TextColor="#27736A"/></VerticalStackLayout></Grid>
         </Border>
         <Border x:Name="CuentaPanel" BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="16" StrokeShape="RoundRectangle 22">
             <VerticalStackLayout Spacing="13">
-                <Image Source="receipt_scan.svg" HeightRequest="145" Aspect="AspectFit"/>
+                <Image Source="receipt_scan.png" HeightRequest="145" Aspect="AspectFit"/>
                 <Label Text="¿Cuánto fue?" FontSize="25" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/>
                 <Label Text="Escanea la factura o escríbelo tú." Style="{StaticResource VaquitaSubtitle}"/>
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                    <Border Style="{StaticResource VaquitaSoftCard}" Padding="8"><Button Text="Cámara" ImageSource="camera_icon.svg" ContentLayout="Top,5" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Camara_Clicked"/></Border>
-                    <Border Grid.Column="1" Style="{StaticResource VaquitaSoftCard}" Padding="8"><Button Text="Galería" ImageSource="gallery_icon.svg" ContentLayout="Top,5" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Galeria_Clicked"/></Border>
+                    <Border Style="{StaticResource VaquitaSoftCard}" Padding="8"><Button Text="Cámara" ImageSource="camera_icon.png" ContentLayout="Top,5" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Camara_Clicked"/></Border>
+                    <Border Grid.Column="1" Style="{StaticResource VaquitaSoftCard}" Padding="8"><Button Text="Galería" ImageSource="gallery_icon.png" ContentLayout="Top,5" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Galeria_Clicked"/></Border>
                 </Grid>
                 <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8"><BoxView HeightRequest="1" Color="#BCD7D2" VerticalOptions="Center"/><Label Grid.Column="1" Text="o manual" FontSize="10" TextColor="#6B7C78"/><BoxView Grid.Column="2" HeightRequest="1" Color="#BCD7D2" VerticalOptions="Center"/></Grid>
-                <Border Style="{StaticResource VaquitaInputBorder}"><Grid ColumnDefinitions="Auto,*,Auto"><Label Text="$" FontSize="25" FontAttributes="Bold" TextColor="#163832" Margin="5,0" VerticalTextAlignment="Center"/><Entry Grid.Column="1" x:Name="TotalEntry" Style="{StaticResource VaquitaEntry}" Keyboard="Numeric" Placeholder="84.600" FontSize="23"/><ImageButton Grid.Column="2" Source="check_icon.svg" BackgroundColor="#B8F340" WidthRequest="46" HeightRequest="46" Padding="8" CornerRadius="12" Clicked="ConfirmarTotal_Clicked"/></Grid></Border>
+                <Border Style="{StaticResource VaquitaInputBorder}"><Grid ColumnDefinitions="Auto,*,Auto"><Label Text="$" FontSize="25" FontAttributes="Bold" TextColor="#163832" Margin="5,0" VerticalTextAlignment="Center"/><Entry Grid.Column="1" x:Name="TotalEntry" Style="{StaticResource VaquitaEntry}" Keyboard="Numeric" Placeholder="84.60" FontSize="23"/><ImageButton Grid.Column="2" Source="check_icon.png" BackgroundColor="#B8F340" WidthRequest="46" HeightRequest="46" Padding="8" CornerRadius="12" Clicked="ConfirmarTotal_Clicked"/></Grid></Border>
             </VerticalStackLayout>
         </Border>
         <Border x:Name="TotalConfirmadoPanel" IsVisible="False" Style="{StaticResource VaquitaCard}" BackgroundColor="#FFF1C1">
-            <VerticalStackLayout><Image Source="check_icon.svg" WidthRequest="52" HeightRequest="52"/><Label Text="TOTAL CONFIRMADO" Style="{StaticResource VaquitaEyebrow}"/><Label x:Name="TotalConfirmadoLabel" FontSize="31" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/></VerticalStackLayout>
+            <VerticalStackLayout><Image Source="check_icon.png" WidthRequest="52" HeightRequest="52"/><Label Text="TOTAL CONFIRMADO" Style="{StaticResource VaquitaEyebrow}"/><Label x:Name="TotalConfirmadoLabel" FontSize="31" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/></VerticalStackLayout>
         </Border>
         <Button x:Name="ContinuarButton" Text="Elegir cómo pagamos" Style="{StaticResource VaquitaButton}" Clicked="Continuar_Clicked"/>
-        <Button x:Name="CerrarSalaButton" Text="Cerrar sala" ImageSource="close_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaDarkButton}" Clicked="CerrarSala_Clicked"/>
+        <Button x:Name="CerrarSalaButton" Text="Cerrar sala" ImageSource="close_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaDarkButton}" Clicked="CerrarSala_Clicked"/>
         <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
     </VerticalStackLayout></ScrollView>
 </ContentPage>

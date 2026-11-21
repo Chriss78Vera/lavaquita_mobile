@@ -27,9 +27,9 @@ public partial class vResultado : ContentPage
         };
         HeroImage.Source = result.Tipo switch
         {
-            TipoResultado.Ruleta => "roulette.svg",
-            TipoResultado.Dados or TipoResultado.Empate => "dice_big.svg",
-            _ => "vaquita_mascot.svg"
+            TipoResultado.Ruleta => "roulette.png",
+            TipoResultado.Dados or TipoResultado.Empate => "dice_big.png",
+            _ => "vaquita_mascot.png"
         };
         foreach (var item in result.Detalles)
         {

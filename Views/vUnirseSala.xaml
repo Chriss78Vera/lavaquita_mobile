@@ -3,7 +3,7 @@
              x:Class="LaVaquita.Views.vUnirseSala" Style="{StaticResource VaquitaPage}" Title="Unirse">
     <ScrollView><VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
         <Border WidthRequest="92" HeightRequest="92" BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" Padding="18" StrokeShape="RoundRectangle 28" HorizontalOptions="Center" Rotation="-3">
-            <Image Source="people_icon.svg"/>
+            <Image Source="people_icon.png"/>
             <Border.Shadow><Shadow Brush="#163832" Offset="5,5" Radius="0" Opacity="1"/></Border.Shadow>
         </Border>
         <Label Text="YA TE ESTÁN ESPERANDO" Style="{StaticResource VaquitaEyebrow}"/>
@@ -18,8 +18,8 @@
             <CollectionView.ItemsLayout><LinearItemsLayout Orientation="Horizontal" ItemSpacing="9"/></CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate><DataTemplate x:DataType="models:AvatarOption"><Border WidthRequest="76" BackgroundColor="White" Stroke="#DCE5DB" Padding="8" StrokeShape="RoundRectangle 16"><VerticalStackLayout><Image Source="{Binding IconFile}" HeightRequest="48" WidthRequest="48"/><Label Text="{Binding Nombre}" FontSize="9" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/></VerticalStackLayout><VisualStateManager.VisualStateGroups><VisualStateGroup Name="CommonStates"><VisualState Name="Normal"/><VisualState Name="Selected"><VisualState.Setters><Setter Property="Stroke" Value="#163832"/><Setter Property="StrokeThickness" Value="2"/><Setter Property="BackgroundColor" Value="#F4FFBE"/></VisualState.Setters></VisualState></VisualStateGroup></VisualStateManager.VisualStateGroups></Border></DataTemplate></CollectionView.ItemTemplate>
         </CollectionView>
-        <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="11" StrokeShape="RoundRectangle 14"><HorizontalStackLayout HorizontalOptions="Center" Spacing="7"><Image Source="sync_icon.svg" WidthRequest="19" HeightRequest="19"/><Label Text="Conexión segura y sin registro" TextColor="#27736A" FontSize="11" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
-        <Button x:Name="EntrarButton" Text="Entrar a la sala" ImageSource="people_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Entrar_Clicked"/>
+        <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="11" StrokeShape="RoundRectangle 14"><HorizontalStackLayout HorizontalOptions="Center" Spacing="7"><Image Source="sync_icon.png" WidthRequest="19" HeightRequest="19"/><Label Text="Conexión segura y sin registro" TextColor="#27736A" FontSize="11" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+        <Button x:Name="EntrarButton" Text="Entrar a la sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Entrar_Clicked"/>
         <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
     </VerticalStackLayout></ScrollView>
 </ContentPage>

@@ -1,6 +1,6 @@
-using System.Globalization;
 using LaVaquita.Models;
 using LaVaquita.Services;
+using LaVaquita.Utils;
 
 namespace LaVaquita.Views;
 
@@ -86,7 +86,7 @@ public partial class vSala : ContentPage
         }
         if (sala.Cuenta.Total > 0)
         {
-            TotalConfirmadoPanel.IsVisible = true; TotalConfirmadoLabel.Text = $"{sala.Cuenta.Total:N2} {sala.Cuenta.Moneda}";
+            TotalConfirmadoPanel.IsVisible = true; TotalConfirmadoLabel.Text = MoneyFormat.Format(sala.Cuenta.Total, sala.Cuenta.Moneda);
             ContinuarButton.IsEnabled = true;
         }
         else ContinuarButton.IsEnabled = false;
@@ -95,20 +95,36 @@ public partial class vSala : ContentPage
     private async void Camara_Clicked(object? sender, EventArgs e) => await SeleccionarFactura(true);
     private async void Galeria_Clicked(object? sender, EventArgs e) => await SeleccionarFactura(false);
 
+    private async void CopiarCodigo_Clicked(object? sender, EventArgs e)
+    {
+        await Clipboard.Default.SetTextAsync(_session.CodigoSala);
+        await DisplayAlertAsync("Código copiado", "Comparte este código con tu grupo.", "Aceptar");
+    }
+
     private async Task SeleccionarFactura(bool camara)
     {
         try
         {
-            FileResult? foto = camara ? await MediaPicker.Default.CapturePhotoAsync() : (await MediaPicker.Default.PickPhotosAsync()).FirstOrDefault();
+            FileResult? foto;
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+            {
+                foto = await FilePicker.Default.PickAsync(new PickOptions
+                {
+                    PickerTitle = camara ? "Selecciona una foto de la factura" : "Selecciona la factura"
+                });
+            }
+            else
+            {
+                foto = camara
+                    ? await MediaPicker.Default.CapturePhotoAsync()
+                    : (await MediaPicker.Default.PickPhotosAsync()).FirstOrDefault();
+            }
             if (foto is null) return;
             Cargando.IsVisible = Cargando.IsRunning = true;
             await using var stream = await foto.OpenReadAsync();
             var ocr = await _api.LeerFacturaAsync(stream, foto.FileName);
-            if (await DisplayAlertAsync("Total detectado", $"{ocr.Total:N2} {ocr.Currency}\nConfianza: {ocr.Confidence:P0}", "Usar", "Cancelar"))
-            {
-                _session.Cuenta = new Cuenta { Total = ocr.Total, Moneda = ocr.Currency, FueDetectadaPorOcr = true, ConfianzaOcr = ocr.Confidence };
-                await GuardarCuenta();
-            }
+            var cuentaDetectada = new Cuenta { Total = ocr.Total, Moneda = "USD", FueDetectadaPorOcr = true, ConfianzaOcr = ocr.Confidence };
+            await Navigation.PushAsync(new vRevisarCuenta(_api, _session, cuentaDetectada));
         }
         catch (PermissionException) { await DisplayAlertAsync("Permiso rechazado", "Puedes usar la galería o escribir el total.", "Aceptar"); }
         catch (Exception error) { await DisplayAlertAsync("No se pudo leer", error.Message, "Aceptar"); }
@@ -117,9 +133,9 @@ public partial class vSala : ContentPage
 
     private async void ConfirmarTotal_Clicked(object? sender, EventArgs e)
     {
-        if (!decimal.TryParse(TotalEntry.Text?.Replace(',', '.'), NumberStyles.Number, CultureInfo.InvariantCulture, out var total) || total <= 0)
+        if (!MoneyFormat.TryParse(TotalEntry.Text, out var total) || total <= 0)
         { await DisplayAlertAsync("Monto inválido", "Ingresa un total mayor que cero.", "Aceptar"); return; }
-        _session.Cuenta = new Cuenta { Total = total, Moneda = "COP" };
+        _session.Cuenta = new Cuenta { Total = total, Moneda = "USD" };
         await GuardarCuenta();
     }
 
@@ -129,7 +145,7 @@ public partial class vSala : ContentPage
         {
             Cargando.IsVisible = Cargando.IsRunning = true;
             await _api.ConfirmarCuentaAsync(_session.CodigoSala, _session.HostToken, _session.Cuenta);
-            TotalConfirmadoPanel.IsVisible = true; TotalConfirmadoLabel.Text = $"{_session.Cuenta.Total:N2} {_session.Cuenta.Moneda}";
+            TotalConfirmadoPanel.IsVisible = true; TotalConfirmadoLabel.Text = MoneyFormat.Format(_session.Cuenta.Total, _session.Cuenta.Moneda);
             ContinuarButton.IsEnabled = true;
         }
         catch (Exception error) { await DisplayAlertAsync("No se pudo guardar", error.Message, "Aceptar"); }

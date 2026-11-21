@@ -1,6 +1,6 @@
-using System.Globalization;
 using LaVaquita.Models;
 using LaVaquita.Services;
+using LaVaquita.Utils;
 
 namespace LaVaquita.Views;
 
@@ -18,12 +18,13 @@ public partial class vModoRapido : ContentPage
     {
         var nombres = NombresEntry.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Distinct(StringComparer.OrdinalIgnoreCase).Take(10).ToList() ?? [];
-        if (nombres.Count < 2 || !decimal.TryParse(TotalEntry.Text?.Replace(',', '.'), NumberStyles.Number, CultureInfo.InvariantCulture, out var total) || total <= 0)
+        if (nombres.Count < 2 || !MoneyFormat.TryParse(TotalEntry.Text, out var total) || total <= 0)
         {
             await DisplayAlertAsync("Datos incompletos", "Ingresa entre 2 y 10 nombres y un total mayor que cero.", "Aceptar"); return;
         }
         _session.Reiniciar();
         _session.Cuenta.Total = total;
+        _session.Cuenta.Moneda = "USD";
         _session.Participantes = nombres.Select((nombre, index) => new Participante { Id = $"local-{index}", Nombre = nombre }).ToList();
         await Navigation.PushAsync(new vJuegos(_api, _session));
     }
