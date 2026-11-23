@@ -1,29 +1,90 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:models="clr-namespace:LaVaquita.Models"
-             x:Class="LaVaquita.Views.vCrearSala" Style="{StaticResource VaquitaPage}" Title="Crear sala">
-    <ScrollView><VerticalStackLayout Padding="22,18,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
-        <Border Style="{StaticResource VaquitaPill}"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.png" WidthRequest="16" HeightRequest="16"/><Label Text="PLAN ENTRE PANAS" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
-        <Label Text="¿Quién eres?" Style="{StaticResource VaquitaTitle}"/>
-        <Label Text="Un nombre, un avatar y estás dentro." Style="{StaticResource VaquitaSubtitle}"/>
-        <Grid HeightRequest="115">
-            <Border WidthRequest="92" HeightRequest="92" BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" StrokeShape="RoundRectangle 28" HorizontalOptions="Center" VerticalOptions="Center" Rotation="-3">
-                <Image Source="vaquita_mascot.png" Margin="5"/>
-                <Border.Shadow><Shadow Brush="#163832" Offset="5,5" Radius="0" Opacity="1"/></Border.Shadow>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vCrearSala" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:models="clr-namespace:LaVaquita.Models" Title="Crear sala"
+    Style="{StaticResource VaquitaPage}">
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="22,18,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="15">
+            <Border Style="{StaticResource VaquitaPill}">
+                <HorizontalStackLayout Spacing="6">
+                    <Image
+                        HeightRequest="16" Source="sparkles_icon.png" WidthRequest="16" />
+                    <Label
+                        FontAttributes="Bold" FontSize="10" Text="PLAN ENTRE PANAS" TextColor="#27736A"
+                        VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
             </Border>
-        </Grid>
-        <Label Text="TU NOMBRE" Style="{StaticResource VaquitaEyebrow}" HorizontalTextAlignment="Start"/>
-        <Border Style="{StaticResource VaquitaInputBorder}"><Entry x:Name="NombreEntry" Style="{StaticResource VaquitaEntry}" Placeholder="Escribe tu nombre" MaxLength="30"/></Border>
-        <Label Text="ELIGE TU AVATAR" Style="{StaticResource VaquitaEyebrow}" HorizontalTextAlignment="Start" Margin="0,6,0,0"/>
-        <CollectionView x:Name="AvatarCollection" SelectionMode="Single" HeightRequest="190">
-            <CollectionView.ItemsLayout><GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="9" VerticalItemSpacing="9"/></CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate><DataTemplate x:DataType="models:AvatarOption">
-                <Border BackgroundColor="White" Stroke="#DCE5DB" StrokeThickness="1" Padding="8" StrokeShape="RoundRectangle 16">
-                    <VerticalStackLayout Spacing="3"><Image Source="{Binding IconFile}" HeightRequest="43" WidthRequest="43"/><Label Text="{Binding Nombre}" FontSize="10" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/></VerticalStackLayout>
-                    <VisualStateManager.VisualStateGroups><VisualStateGroup Name="CommonStates"><VisualState Name="Normal"/><VisualState Name="Selected"><VisualState.Setters><Setter Property="Stroke" Value="#163832"/><Setter Property="StrokeThickness" Value="2"/><Setter Property="BackgroundColor" Value="#F4FFBE"/></VisualState.Setters></VisualState></VisualStateGroup></VisualStateManager.VisualStateGroups>
+            <Label Style="{StaticResource VaquitaTitle}" Text="¿Quién eres?" />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="Un nombre, un avatar y estás dentro." />
+            <Grid HeightRequest="115">
+                <Border
+                    BackgroundColor="#24D6C8" HeightRequest="92" HorizontalOptions="Center" Rotation="-3"
+                    Stroke="#163832" StrokeShape="RoundRectangle 28" StrokeThickness="2" VerticalOptions="Center"
+                    WidthRequest="92">
+                    <Image Margin="5" Source="vaquita_mascot.png" />
+                    <Border.Shadow>
+                        <Shadow
+                            Brush="#163832" Opacity="1" Radius="0" Offset="5,5" />
+                    </Border.Shadow>
                 </Border>
-            </DataTemplate></CollectionView.ItemTemplate>
-        </CollectionView>
-        <Button x:Name="CrearButton" Text="Crear sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Crear_Clicked"/>
-        <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
-    </VerticalStackLayout></ScrollView>
+            </Grid>
+            <Label
+                HorizontalTextAlignment="Start"
+                Style="{StaticResource VaquitaEyebrow}"
+                Text="TU NOMBRE" />
+            <Border Style="{StaticResource VaquitaInputBorder}">
+                <Entry
+                    x:Name="NombreEntry" MaxLength="30" Placeholder="Escribe tu nombre"
+                    Style="{StaticResource VaquitaEntry}" />
+            </Border>
+            <Label
+                Margin="0,6,0,0" HorizontalTextAlignment="Start"
+                Style="{StaticResource VaquitaEyebrow}"
+                Text="ELIGE TU AVATAR" />
+            <CollectionView
+                x:Name="AvatarCollection" HeightRequest="190" SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout
+                        HorizontalItemSpacing="9" Orientation="Vertical" Span="3" VerticalItemSpacing="9" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:AvatarOption">
+                        <Border
+                            Padding="8" BackgroundColor="White" Stroke="#DCE5DB" StrokeShape="RoundRectangle 16"
+                            StrokeThickness="1">
+                            <VerticalStackLayout Spacing="3">
+                                <Image
+                                    HeightRequest="43"
+                                    Source="{Binding IconFile}"
+                                    WidthRequest="43" />
+                                <Label
+                                    FontAttributes="Bold" FontSize="10" HorizontalTextAlignment="Center"
+                                    Text="{Binding Nombre}"
+                                    TextColor="#163832" />
+                            </VerticalStackLayout>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal" />
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#163832" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="BackgroundColor" Value="#F4FFBE" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button
+                x:Name="CrearButton" Clicked="Crear_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
+                Style="{StaticResource VaquitaButton}"
+                Text="Crear sala" />
+            <ActivityIndicator
+                x:Name="Cargando" IsRunning="False" IsVisible="False" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

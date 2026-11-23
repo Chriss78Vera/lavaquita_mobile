@@ -1,40 +1,135 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LaVaquita.Views.vJuegos" Style="{StaticResource VaquitaPage}" Title="Juegos">
-    <ScrollView><VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
-        <Border Style="{StaticResource VaquitaPill}"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.png" WidthRequest="16" HeightRequest="16"/><Label Text="MOMENTO DE DECIDIR" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
-        <Label Text="¿Cómo pagamos?" Style="{StaticResource VaquitaTitle}"/>
-        <Label Text="Justo y parejo, o que decida la suerte." Style="{StaticResource VaquitaSubtitle}"/>
-        <Border x:Name="DividirCard" BackgroundColor="#DDF8F4" Stroke="#163832" StrokeThickness="2" Padding="12" StrokeShape="RoundRectangle 18">
-            <Border.Shadow><Shadow Brush="#163832" Offset="3,4" Radius="0" Opacity="1"/></Border.Shadow>
-            <Border.GestureRecognizers><TapGestureRecognizer Tapped="DividirCard_Tapped"/></Border.GestureRecognizers>
-            <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
-                <Border BackgroundColor="White" Stroke="#163832" StrokeThickness="2" StrokeShape="RoundRectangle 18" Padding="13"><Image Source="people_icon.png"/></Border>
-                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"><Label Text="MODO TRANQUI" FontSize="9" FontAttributes="Bold" TextColor="#478078"/><Label Text="Dividir" FontSize="23" FontAttributes="Bold" TextColor="#163832"/><Label x:Name="DivisionHintLabel" Text="Todos pagan por igual" FontSize="11" TextColor="#6B7C78"/></VerticalStackLayout>
-                <Label Grid.Column="2" Text="›" FontSize="32" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="52" SemanticProperties.Description="Dividir cuenta"/>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vJuegos" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Juegos"
+    Style="{StaticResource VaquitaPage}">
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="22,20,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="15">
+            <Border Style="{StaticResource VaquitaPill}">
+                <HorizontalStackLayout Spacing="6">
+                    <Image
+                        HeightRequest="16" Source="sparkles_icon.png" WidthRequest="16" />
+                    <Label
+                        FontAttributes="Bold" FontSize="10" Text="MOMENTO DE DECIDIR" TextColor="#27736A"
+                        VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+            </Border>
+            <Label Style="{StaticResource VaquitaTitle}" Text="¿Cómo pagamos?" />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="Justo y parejo, o que decida la suerte." />
+            <Border
+                x:Name="DividirCard" Padding="12" BackgroundColor="#DDF8F4" Stroke="#163832"
+                StrokeShape="RoundRectangle 18" StrokeThickness="2">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#163832" Opacity="1" Radius="0" Offset="3,4" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="DividirCard_Tapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+                    <Border
+                        Padding="13" BackgroundColor="White" Stroke="#163832" StrokeShape="RoundRectangle 18"
+                        StrokeThickness="2">
+                        <Image Source="people_icon.png" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label
+                            FontAttributes="Bold" FontSize="9" Text="MODO TRANQUI" TextColor="#478078" />
+                        <Label
+                            FontAttributes="Bold" FontSize="23" Text="Dividir" TextColor="#163832" />
+                        <Label
+                            x:Name="DivisionHintLabel" FontSize="11" Text="Todos pagan por igual" TextColor="#6B7C78" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="2" FontAttributes="Bold" FontSize="32" HorizontalTextAlignment="Center"
+                        SemanticProperties.Description="Dividir cuenta" Text="›" TextColor="#163832" VerticalTextAlignment="Center"
+                        WidthRequest="52" />
+                </Grid>
+            </Border>
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
+                <BoxView
+                    HeightRequest="1" VerticalOptions="Center" Color="#DCE5DB" />
+                <Label
+                    Grid.Column="1" FontAttributes="Bold" FontSize="9" Text="¿CON SUERTE?"
+                    TextColor="#6B7C78" />
+                <BoxView
+                    Grid.Column="2" HeightRequest="1" VerticalOptions="Center" Color="#DCE5DB" />
             </Grid>
-        </Border>
-        <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8"><BoxView HeightRequest="1" Color="#DCE5DB" VerticalOptions="Center"/><Label Grid.Column="1" Text="¿CON SUERTE?" FontSize="9" FontAttributes="Bold" TextColor="#6B7C78"/><BoxView Grid.Column="2" HeightRequest="1" Color="#DCE5DB" VerticalOptions="Center"/></Grid>
-        <Border x:Name="RuletaCard" BackgroundColor="#FFF1C1" Stroke="#163832" StrokeThickness="2" Padding="12" StrokeShape="RoundRectangle 18">
-            <Border.Shadow><Shadow Brush="#163832" Offset="3,4" Radius="0" Opacity="1"/></Border.Shadow>
-            <Border.GestureRecognizers><TapGestureRecognizer Tapped="RuletaCard_Tapped"/></Border.GestureRecognizers>
-            <Grid ColumnDefinitions="72,*,Auto" ColumnSpacing="10">
-                <Image Source="roulette.png" WidthRequest="65" HeightRequest="65"/>
-                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"><Label Text="MODO VALIENTE" FontSize="9" FontAttributes="Bold" TextColor="#8C6610"/><Label Text="Ruleta de Paga" FontSize="21" FontAttributes="Bold" TextColor="#163832"/><Label Text="Que el destino elija" FontSize="11" TextColor="#6B7C78"/></VerticalStackLayout>
-                <Label Grid.Column="2" Text="›" FontSize="32" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="52" SemanticProperties.Description="Abrir ruleta"/>
-            </Grid>
-        </Border>
-        <Border x:Name="DadosCard" BackgroundColor="#E2E7FF" Stroke="#163832" StrokeThickness="2" Padding="12" StrokeShape="RoundRectangle 18">
-            <Border.Shadow><Shadow Brush="#163832" Offset="3,4" Radius="0" Opacity="1"/></Border.Shadow>
-            <Border.GestureRecognizers><TapGestureRecognizer Tapped="DadosCard_Tapped"/></Border.GestureRecognizers>
-            <Grid ColumnDefinitions="72,*,Auto" ColumnSpacing="10">
-                <Image Source="dice_big.png" WidthRequest="66" HeightRequest="66"/>
-                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"><Label Text="JUEGO DE SUERTE" FontSize="9" FontAttributes="Bold" TextColor="#5064B1"/><Label Text="Dados" FontSize="22" FontAttributes="Bold" TextColor="#163832"/><Label Text="El número más alto paga" FontSize="11" TextColor="#6B7C78"/></VerticalStackLayout>
-                <Label Grid.Column="2" Text="›" FontSize="32" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="52" SemanticProperties.Description="Abrir dados"/>
-            </Grid>
-        </Border>
-        <Border x:Name="EsperaPanel" IsVisible="False" BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="18" StrokeShape="RoundRectangle 18"><VerticalStackLayout><Image Source="sync_icon.png" WidthRequest="38" HeightRequest="38"/><Label Text="Esperando al anfitrión" FontAttributes="Bold" TextColor="#27736A" HorizontalTextAlignment="Center"/><Label Text="El juego aparecerá para todos al mismo tiempo" FontSize="11" TextColor="#27736A" HorizontalTextAlignment="Center"/></VerticalStackLayout></Border>
-        <Border BackgroundColor="#EEF3E9" StrokeThickness="0" Padding="10" StrokeShape="RoundRectangle 99" HorizontalOptions="Center"><Label x:Name="ResumenLabel" FontSize="11" TextColor="#6B7C78"/></Border>
-        <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
-    </VerticalStackLayout></ScrollView>
+            <Border
+                x:Name="RuletaCard" Padding="12" BackgroundColor="#FFF1C1" Stroke="#163832"
+                StrokeShape="RoundRectangle 18" StrokeThickness="2">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#163832" Opacity="1" Radius="0" Offset="3,4" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="RuletaCard_Tapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="72,*,Auto" ColumnSpacing="10">
+                    <Image
+                        HeightRequest="65" Source="roulette.png" WidthRequest="65" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label
+                            FontAttributes="Bold" FontSize="9" Text="MODO VALIENTE" TextColor="#8C6610" />
+                        <Label
+                            FontAttributes="Bold" FontSize="21" Text="Ruleta de Paga" TextColor="#163832" />
+                        <Label
+                            FontSize="11" Text="Que el destino elija" TextColor="#6B7C78" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="2" FontAttributes="Bold" FontSize="32" HorizontalTextAlignment="Center"
+                        SemanticProperties.Description="Abrir ruleta" Text="›" TextColor="#163832" VerticalTextAlignment="Center"
+                        WidthRequest="52" />
+                </Grid>
+            </Border>
+            <Border
+                x:Name="DadosCard" Padding="12" BackgroundColor="#E2E7FF" Stroke="#163832"
+                StrokeShape="RoundRectangle 18" StrokeThickness="2">
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#163832" Opacity="1" Radius="0" Offset="3,4" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="DadosCard_Tapped" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="72,*,Auto" ColumnSpacing="10">
+                    <Image
+                        HeightRequest="66" Source="dice_big.png" WidthRequest="66" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label
+                            FontAttributes="Bold" FontSize="9" Text="JUEGO DE SUERTE" TextColor="#5064B1" />
+                        <Label
+                            FontAttributes="Bold" FontSize="22" Text="Dados" TextColor="#163832" />
+                        <Label
+                            FontSize="11" Text="El número más alto paga" TextColor="#6B7C78" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="2" FontAttributes="Bold" FontSize="32" HorizontalTextAlignment="Center"
+                        SemanticProperties.Description="Abrir dados" Text="›" TextColor="#163832" VerticalTextAlignment="Center"
+                        WidthRequest="52" />
+                </Grid>
+            </Border>
+            <Border
+                x:Name="EsperaPanel" Padding="18" BackgroundColor="#DDF8F4" IsVisible="False"
+                StrokeShape="RoundRectangle 18" StrokeThickness="0">
+                <VerticalStackLayout>
+                    <Image
+                        HeightRequest="38" Source="sync_icon.png" WidthRequest="38" />
+                    <Label
+                        FontAttributes="Bold" HorizontalTextAlignment="Center" Text="Esperando al anfitrión" TextColor="#27736A" />
+                    <Label
+                        FontSize="11" HorizontalTextAlignment="Center" Text="El juego aparecerá para todos al mismo tiempo" TextColor="#27736A" />
+                </VerticalStackLayout>
+            </Border>
+            <Border
+                Padding="10" BackgroundColor="#EEF3E9" HorizontalOptions="Center" StrokeShape="RoundRectangle 99"
+                StrokeThickness="0">
+                <Label
+                    x:Name="ResumenLabel" FontSize="11" TextColor="#6B7C78" />
+            </Border>
+            <ActivityIndicator
+                x:Name="Cargando" IsRunning="False" IsVisible="False" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

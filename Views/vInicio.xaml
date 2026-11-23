@@ -1,35 +1,115 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
-             x:Class="LaVaquita.Views.vInicio" Style="{StaticResource VaquitaPage}" Title="La Vaquita" NavigationPage.HasNavigationBar="False">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vInicio" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls" Title="La Vaquita"
+    NavigationPage.HasNavigationBar="False"
+    Style="{StaticResource VaquitaPage}">
     <Grid BackgroundColor="#D9F3EC">
-        <shapes:Ellipse Fill="#F4FFBE" WidthRequest="260" HeightRequest="260" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="-100" TranslationY="-80" Opacity="0.8"/>
-        <shapes:Ellipse Fill="#BCE8FF" WidthRequest="260" HeightRequest="260" HorizontalOptions="End" VerticalOptions="End" TranslationX="100" TranslationY="90" Opacity="0.75"/>
+        <shapes:Ellipse
+            Fill="#F4FFBE" HeightRequest="260" HorizontalOptions="Start" Opacity="0.8"
+            TranslationX="-100" TranslationY="-80" VerticalOptions="Start" WidthRequest="260" />
+        <shapes:Ellipse
+            Fill="#BCE8FF" HeightRequest="260" HorizontalOptions="End" Opacity="0.75"
+            TranslationX="100" TranslationY="90" VerticalOptions="End" WidthRequest="260" />
         <ScrollView>
-            <VerticalStackLayout Spacing="0" MaximumWidthRequest="560" HorizontalOptions="Center" VerticalOptions="Center">
+            <VerticalStackLayout
+                HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="0" VerticalOptions="Center">
                 <VerticalStackLayout Padding="24,34,24,10" Spacing="10">
-                    <Border BackgroundColor="#CCFFFFFF" StrokeThickness="0" Padding="12,7" StrokeShape="RoundRectangle 99" HorizontalOptions="Center"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.png" WidthRequest="16" HeightRequest="16"/><Label Text="CUENTAS CLARAS, PANAS FELICES" FontSize="10" FontAttributes="Bold" TextColor="#163832" CharacterSpacing="0.5" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+                    <Border
+                        Padding="12,7" BackgroundColor="#CCFFFFFF" HorizontalOptions="Center" StrokeShape="RoundRectangle 99"
+                        StrokeThickness="0">
+                        <HorizontalStackLayout Spacing="6">
+                            <Image
+                                HeightRequest="16" Source="sparkles_icon.png" WidthRequest="16" />
+                            <Label
+                                CharacterSpacing="0.5" FontAttributes="Bold" FontSize="10" Text="CUENTAS CLARAS, PANAS FELICES"
+                                TextColor="#163832" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
                     <Grid HeightRequest="265">
-                        <Border BackgroundColor="#B8F340" Stroke="#163832" StrokeThickness="3" WidthRequest="205" HeightRequest="205" Padding="20" StrokeShape="RoundRectangle 30" HorizontalOptions="Center" VerticalOptions="Center">
-                            <Border.Shadow><Shadow Brush="#163832" Offset="8,8" Radius="0" Opacity="1"/></Border.Shadow>
-                            <Image Source="appiconfg.png" Aspect="AspectFit" SemanticProperties.Description="Ícono de La Vaquita"/>
+                        <Border
+                            Padding="20" BackgroundColor="#B8F340" HeightRequest="205" HorizontalOptions="Center"
+                            Stroke="#163832" StrokeShape="RoundRectangle 30" StrokeThickness="3" VerticalOptions="Center"
+                            WidthRequest="205">
+                            <Border.Shadow>
+                                <Shadow
+                                    Brush="#163832" Opacity="1" Radius="0" Offset="8,8" />
+                            </Border.Shadow>
+                            <Image
+                                Aspect="AspectFit" SemanticProperties.Description="Ícono de La Vaquita" Source="appiconfg.png" />
                         </Border>
-                        <Border BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" WidthRequest="43" HeightRequest="43" Padding="6" StrokeShape="RoundRectangle 99" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="50" TranslationY="32"><Image Source="coin_icon.png"/></Border>
-                        <Border BackgroundColor="#6D8DFF" Stroke="#163832" StrokeThickness="2" WidthRequest="39" HeightRequest="39" Padding="7" StrokeShape="RoundRectangle 99" HorizontalOptions="End" VerticalOptions="End" TranslationX="-48" TranslationY="-30"><Image Source="sparkles_icon.png"/></Border>
+                        <Border
+                            Padding="6" BackgroundColor="#24D6C8" HeightRequest="43" HorizontalOptions="Start"
+                            Stroke="#163832" StrokeShape="RoundRectangle 99" StrokeThickness="2" TranslationX="50"
+                            TranslationY="32" VerticalOptions="Start" WidthRequest="43">
+                            <Image Source="coin_icon.png" />
+                        </Border>
+                        <Border
+                            Padding="7" BackgroundColor="#6D8DFF" HeightRequest="39" HorizontalOptions="End"
+                            Stroke="#163832" StrokeShape="RoundRectangle 99" StrokeThickness="2" TranslationX="-48"
+                            TranslationY="-30" VerticalOptions="End" WidthRequest="39">
+                            <Image Source="sparkles_icon.png" />
+                        </Border>
                     </Grid>
-                    <Label Text="LA" FontSize="15" FontAttributes="Bold" CharacterSpacing="6" TextColor="#163832" HorizontalTextAlignment="Center"/>
-                    <Label Text="VAQUITA" FontSize="46" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center" Margin="0,-10,0,0"/>
-                    <Label Text="La cuenta se paga entre todos" FontSize="14" TextColor="#6B7C78" HorizontalTextAlignment="Center"/>
+                    <Label
+                        CharacterSpacing="6" FontAttributes="Bold" FontSize="15" HorizontalTextAlignment="Center"
+                        Text="LA" TextColor="#163832" />
+                    <Label
+                        Margin="0,-10,0,0" FontAttributes="Bold" FontSize="46" HorizontalTextAlignment="Center"
+                        Text="VAQUITA" TextColor="#163832" />
+                    <Label
+                        FontSize="14" HorizontalTextAlignment="Center" Text="La cuenta se paga entre todos" TextColor="#6B7C78" />
                 </VerticalStackLayout>
-                <Border BackgroundColor="#FBFAF2" StrokeThickness="0" Padding="22,24,22,24" StrokeShape="RoundRectangle 30,30,0,0">
-                    <VerticalStackLayout Spacing="15">
-                        <Button Text="Crear una sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="CrearSala_Clicked"/>
-                        <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
-                            <Button Text="Unirme con código" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Unirse_Clicked"/>
-                            <Label Grid.Column="1" Text="•" VerticalTextAlignment="Center" TextColor="#6B7C78"/>
-                            <Button Grid.Column="2" Text="Modo rápido" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="ModoRapido_Clicked"/>
-                        </Grid>
-                        <Label Text="Sin registro. Todos conectados." Style="{StaticResource VaquitaSubtitle}" FontSize="11"/>
-                    </VerticalStackLayout>
+                <Border
+                    Padding="22,24,22,24" BackgroundColor="#FBFAF2" StrokeShape="RoundRectangle 30,30,0,0" StrokeThickness="0">
+                    <Grid>
+                        <VerticalStackLayout x:Name="OnlineOptions" Spacing="15">
+                            <Button
+                                Clicked="CrearSala_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
+                                Style="{StaticResource VaquitaButton}"
+                                Text="Crear una sala" />
+                            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
+                                <Button
+                                    BackgroundColor="Transparent" Clicked="Unirse_Clicked" FontAttributes="Bold" Text="Unirme con código"
+                                    TextColor="#163832" />
+                                <Label
+                                    Grid.Column="1" Text="•" TextColor="#6B7C78" VerticalTextAlignment="Center" />
+                                <Button
+                                    Grid.Column="2" BackgroundColor="Transparent" Clicked="ModoRapido_Clicked" FontAttributes="Bold"
+                                    Text="Modo rápido" TextColor="#163832" />
+                            </Grid>
+                            <Label
+                                FontSize="11"
+                                Style="{StaticResource VaquitaSubtitle}"
+                                Text="Sin registro. Todos conectados." />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout
+                            x:Name="OfflineOptions" IsVisible="False" Spacing="16">
+                            <Border
+                                Padding="12" BackgroundColor="#FFF1C1" StrokeShape="RoundRectangle 14" StrokeThickness="0">
+                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="9">
+                                    <Image
+                                        HeightRequest="24" Source="close_icon.png" WidthRequest="24" />
+                                    <VerticalStackLayout Spacing="0">
+                                        <Label
+                                            FontAttributes="Bold" FontSize="13" Text="Sin conexión a internet" TextColor="#163832" />
+                                        <Label
+                                            FontSize="10" Text="Las salas estarán disponibles al reconectarte" TextColor="#6B7C78" />
+                                    </VerticalStackLayout>
+                                </HorizontalStackLayout>
+                            </Border>
+                            <Button
+                                Clicked="ModoRapido_Clicked" ContentLayout="Top,8" FontSize="21" HeightRequest="104"
+                                ImageSource="receipt_icon.png"
+                                Style="{StaticResource VaquitaButton}"
+                                Text="MODO RÁPIDO" />
+                            <Label
+                                FontSize="12" HorizontalTextAlignment="Center" Text="Funciona completamente en este teléfono y no guarda datos."
+                                TextColor="#6B7C78" />
+                        </VerticalStackLayout>
+                    </Grid>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>

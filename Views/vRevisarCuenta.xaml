@@ -1,38 +1,60 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LaVaquita.Views.vRevisarCuenta"
-             Style="{StaticResource VaquitaPage}"
-             Title="Revisar cuenta">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vRevisarCuenta" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Revisar cuenta"
+    Style="{StaticResource VaquitaPage}">
     <ScrollView>
-        <VerticalStackLayout Padding="22,24,22,36" Spacing="16" MaximumWidthRequest="560" HorizontalOptions="Center">
+        <VerticalStackLayout
+            Padding="22,24,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="16">
             <Border Style="{StaticResource VaquitaPill}">
                 <HorizontalStackLayout Spacing="6">
-                    <Image Source="check_icon.png" WidthRequest="16" HeightRequest="16"/>
-                    <Label Text="LECTURA COMPLETADA" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/>
+                    <Image
+                        HeightRequest="16" Source="check_icon.png" WidthRequest="16" />
+                    <Label
+                        FontAttributes="Bold" FontSize="10" Text="LECTURA COMPLETADA" TextColor="#27736A"
+                        VerticalTextAlignment="Center" />
                 </HorizontalStackLayout>
             </Border>
-            <Label Text="Revisa tu cuenta" Style="{StaticResource VaquitaTitle}"/>
-            <Label Text="Confirma el total antes de repartirlo entre todos." Style="{StaticResource VaquitaSubtitle}"/>
+            <Label Style="{StaticResource VaquitaTitle}" Text="Revisa tu cuenta" />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="Confirma el total antes de repartirlo entre todos." />
 
-            <Border BackgroundColor="#DDF8F4" Stroke="#163832" StrokeThickness="2" Padding="20" StrokeShape="RoundRectangle 22">
+            <Border
+                Padding="20" BackgroundColor="#DDF8F4" Stroke="#163832" StrokeShape="RoundRectangle 22"
+                StrokeThickness="2">
                 <VerticalStackLayout Spacing="12">
-                    <Image Source="receipt_scan.png" HeightRequest="120" Aspect="AspectFit"/>
-                    <Label Text="TOTAL DETECTADO" Style="{StaticResource VaquitaEyebrow}"/>
+                    <Image
+                        Aspect="AspectFit" HeightRequest="120" Source="receipt_scan.png" />
+                    <Label Style="{StaticResource VaquitaEyebrow}" Text="TOTAL DETECTADO" />
                     <Border Style="{StaticResource VaquitaInputBorder}">
                         <Grid ColumnDefinitions="Auto,*,Auto">
-                            <Label Text="$" FontSize="25" FontAttributes="Bold" TextColor="#163832" VerticalTextAlignment="Center" Margin="5,0"/>
-                            <Entry Grid.Column="1" x:Name="TotalEntry" Style="{StaticResource VaquitaEntry}" Keyboard="Numeric" FontSize="27" HorizontalTextAlignment="Center"/>
-                            <Label Grid.Column="2" Text="USD" FontSize="12" FontAttributes="Bold" TextColor="#27736A" VerticalTextAlignment="Center" Margin="0,0,8,0"/>
+                            <Label
+                                Margin="5,0" FontAttributes="Bold" FontSize="25" Text="$"
+                                TextColor="#163832" VerticalTextAlignment="Center" />
+                            <Entry
+                                x:Name="TotalEntry" Grid.Column="1" FontSize="27" HorizontalTextAlignment="Center"
+                                Keyboard="Numeric"
+                                Style="{StaticResource VaquitaEntry}" />
+                            <Label
+                                Grid.Column="2" Margin="0,0,8,0" FontAttributes="Bold" FontSize="12"
+                                Text="USD" TextColor="#27736A" VerticalTextAlignment="Center" />
                         </Grid>
                     </Border>
-                    <Label x:Name="ConfianzaLabel" Text="Confianza de lectura" FontSize="11" TextColor="#27736A" HorizontalTextAlignment="Center"/>
+                    <Label
+                        x:Name="ConfianzaLabel" FontSize="11" HorizontalTextAlignment="Center" Text="Confianza de lectura"
+                        TextColor="#27736A" />
                 </VerticalStackLayout>
             </Border>
 
-            <Button x:Name="ConfirmarButton" Text="Usar este total" ImageSource="check_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Confirmar_Clicked"/>
-            <Button Text="Cancelar y volver" Style="{StaticResource VaquitaSecondaryButton}" Clicked="Cancelar_Clicked"/>
-            <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
+            <Button
+                x:Name="ConfirmarButton" Clicked="Confirmar_Clicked" ContentLayout="Left,10" ImageSource="check_icon.png"
+                Style="{StaticResource VaquitaButton}"
+                Text="Usar este total" />
+            <Button
+                Clicked="Cancelar_Clicked"
+                Style="{StaticResource VaquitaSecondaryButton}"
+                Text="Cancelar y volver" />
+            <ActivityIndicator
+                x:Name="Cargando" IsRunning="False" IsVisible="False" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

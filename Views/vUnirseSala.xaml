@@ -1,25 +1,88 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:models="clr-namespace:LaVaquita.Models"
-             x:Class="LaVaquita.Views.vUnirseSala" Style="{StaticResource VaquitaPage}" Title="Unirse">
-    <ScrollView><VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
-        <Border WidthRequest="92" HeightRequest="92" BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" Padding="18" StrokeShape="RoundRectangle 28" HorizontalOptions="Center" Rotation="-3">
-            <Image Source="people_icon.png"/>
-            <Border.Shadow><Shadow Brush="#163832" Offset="5,5" Radius="0" Opacity="1"/></Border.Shadow>
-        </Border>
-        <Label Text="YA TE ESTÁN ESPERANDO" Style="{StaticResource VaquitaEyebrow}"/>
-        <Label Text="Únete a la sala" Style="{StaticResource VaquitaTitle}"/>
-        <Label Text="Escribe el código que compartió tu pana." Style="{StaticResource VaquitaSubtitle}"/>
-        <Label Text="CÓDIGO DE LA SALA" Style="{StaticResource VaquitaEyebrow}" HorizontalTextAlignment="Start"/>
-        <Border Style="{StaticResource VaquitaInputBorder}"><Entry x:Name="CodigoEntry" Style="{StaticResource VaquitaEntry}" Placeholder="VACA-00" MaxLength="7" TextChanged="Codigo_TextChanged" FontSize="24" FontAttributes="Bold" CharacterSpacing="3" HorizontalTextAlignment="Center"/></Border>
-        <Label Text="TU NOMBRE" Style="{StaticResource VaquitaEyebrow}" HorizontalTextAlignment="Start"/>
-        <Border Style="{StaticResource VaquitaInputBorder}"><Entry x:Name="NombreEntry" Style="{StaticResource VaquitaEntry}" Placeholder="¿Cómo te llamas?" MaxLength="30"/></Border>
-        <Label Text="ELIGE TU AVATAR" Style="{StaticResource VaquitaEyebrow}" HorizontalTextAlignment="Start"/>
-        <CollectionView x:Name="AvatarCollection" SelectionMode="Single" HeightRequest="116">
-            <CollectionView.ItemsLayout><LinearItemsLayout Orientation="Horizontal" ItemSpacing="9"/></CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate><DataTemplate x:DataType="models:AvatarOption"><Border WidthRequest="76" BackgroundColor="White" Stroke="#DCE5DB" Padding="8" StrokeShape="RoundRectangle 16"><VerticalStackLayout><Image Source="{Binding IconFile}" HeightRequest="48" WidthRequest="48"/><Label Text="{Binding Nombre}" FontSize="9" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/></VerticalStackLayout><VisualStateManager.VisualStateGroups><VisualStateGroup Name="CommonStates"><VisualState Name="Normal"/><VisualState Name="Selected"><VisualState.Setters><Setter Property="Stroke" Value="#163832"/><Setter Property="StrokeThickness" Value="2"/><Setter Property="BackgroundColor" Value="#F4FFBE"/></VisualState.Setters></VisualState></VisualStateGroup></VisualStateManager.VisualStateGroups></Border></DataTemplate></CollectionView.ItemTemplate>
-        </CollectionView>
-        <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="11" StrokeShape="RoundRectangle 14"><HorizontalStackLayout HorizontalOptions="Center" Spacing="7"><Image Source="sync_icon.png" WidthRequest="19" HeightRequest="19"/><Label Text="Conexión segura y sin registro" TextColor="#27736A" FontSize="11" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
-        <Button x:Name="EntrarButton" Text="Entrar a la sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Entrar_Clicked"/>
-        <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
-    </VerticalStackLayout></ScrollView>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vUnirseSala" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:models="clr-namespace:LaVaquita.Models" Title="Unirse"
+    Style="{StaticResource VaquitaPage}">
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="22,20,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="15">
+            <Border
+                Padding="18" BackgroundColor="#24D6C8" HeightRequest="92" HorizontalOptions="Center"
+                Rotation="-3" Stroke="#163832" StrokeShape="RoundRectangle 28" StrokeThickness="2"
+                WidthRequest="92">
+                <Image Source="people_icon.png" />
+                <Border.Shadow>
+                    <Shadow
+                        Brush="#163832" Opacity="1" Radius="0" Offset="5,5" />
+                </Border.Shadow>
+            </Border>
+            <Label Style="{StaticResource VaquitaEyebrow}" Text="YA TE ESTÁN ESPERANDO" />
+            <Label Style="{StaticResource VaquitaTitle}" Text="Únete a la sala" />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="Escribe el código que compartió tu pana." />
+            <Label
+                HorizontalTextAlignment="Start"
+                Style="{StaticResource VaquitaEyebrow}"
+                Text="CÓDIGO DE LA SALA" />
+            <Border Style="{StaticResource VaquitaInputBorder}">
+                <Entry
+                    x:Name="CodigoEntry" CharacterSpacing="3" FontAttributes="Bold" FontSize="24"
+                    HorizontalTextAlignment="Center" MaxLength="7" Placeholder="VACA-00"
+                    Style="{StaticResource VaquitaEntry}"
+                    TextChanged="Codigo_TextChanged" />
+            </Border>
+            <Label
+                HorizontalTextAlignment="Start"
+                Style="{StaticResource VaquitaEyebrow}"
+                Text="TU NOMBRE" />
+            <Border Style="{StaticResource VaquitaInputBorder}">
+                <Entry
+                    x:Name="NombreEntry" MaxLength="30" Placeholder="¿Cómo te llamas?"
+                    Style="{StaticResource VaquitaEntry}" />
+            </Border>
+            <Label
+                HorizontalTextAlignment="Start"
+                Style="{StaticResource VaquitaEyebrow}"
+                Text="ELIGE TU AVATAR" />
+            <CollectionView
+                x:Name="AvatarCollection" HeightRequest="116" SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="9" Orientation="Horizontal" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:AvatarOption">
+                        <Border
+                            Padding="8" BackgroundColor="White" Stroke="#DCE5DB" StrokeShape="RoundRectangle 16"
+                            WidthRequest="76">
+                            <VerticalStackLayout>
+                                <Image
+                                    HeightRequest="48"
+                                    Source="{Binding IconFile}"
+                                    WidthRequest="48" />
+                                <Label
+                                    FontAttributes="Bold" FontSize="9" HorizontalTextAlignment="Center"
+                                    Text="{Binding Nombre}"
+                                    TextColor="#163832" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Border
+                Padding="11" BackgroundColor="#DDF8F4" StrokeShape="RoundRectangle 14" StrokeThickness="0">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="7">
+                    <Image
+                        HeightRequest="19" Source="sync_icon.png" WidthRequest="19" />
+                    <Label
+                        FontAttributes="Bold" FontSize="11" Text="Conexión segura y sin registro" TextColor="#27736A"
+                        VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+            </Border>
+            <Button
+                x:Name="EntrarButton" Clicked="Entrar_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
+                Style="{StaticResource VaquitaButton}"
+                Text="Entrar a la sala" />
+            <ActivityIndicator
+                x:Name="Cargando" IsRunning="False" IsVisible="False" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

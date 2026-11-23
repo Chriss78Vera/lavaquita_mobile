@@ -1,32 +1,49 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LaVaquita.Views.vDados"
-             Style="{StaticResource VaquitaPage}"
-             Title="Dados">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LaVaquita.Views.vDados" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Dados"
+    Style="{StaticResource VaquitaPage}">
     <ScrollView>
-        <VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
-            <Border Style="{StaticResource VaquitaPill}"><Label Text="JUEGO DE SUERTE" TextColor="#5064B1" FontSize="10" FontAttributes="Bold"/></Border>
-            <Label Text="Dados" Style="{StaticResource VaquitaTitle}"/>
-            <Label Text="El número más alto paga la cuenta." Style="{StaticResource VaquitaSubtitle}"/>
+        <VerticalStackLayout
+            Padding="22,20,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="15">
+            <Border Style="{StaticResource VaquitaPill}">
+                <Label
+                    FontAttributes="Bold" FontSize="10" Text="JUEGO DE SUERTE" TextColor="#5064B1" />
+            </Border>
+            <Label Style="{StaticResource VaquitaTitle}" Text="Dados" />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="El número más alto paga la cuenta." />
 
-            <Border BackgroundColor="#E2E7FF" Stroke="#163832" StrokeThickness="2" Padding="18" StrokeShape="RoundRectangle 22">
+            <Border
+                Padding="18" BackgroundColor="#E2E7FF" Stroke="#163832" StrokeShape="RoundRectangle 22"
+                StrokeThickness="2">
                 <VerticalStackLayout Spacing="12">
-                    <Image Source="dice_big.png" HeightRequest="150" WidthRequest="150"/>
-                    <Label Text="UNA RONDA, UN GANADOR" Style="{StaticResource VaquitaEyebrow}"/>
-                    <Label x:Name="ReglaLabel" Text="El mayor número invita." FontSize="13" TextColor="#5064B1" HorizontalTextAlignment="Center"/>
+                    <Image
+                        HeightRequest="150" Source="dice_big.png" WidthRequest="150" />
+                    <Label Style="{StaticResource VaquitaEyebrow}" Text="UNA RONDA, UN GANADOR" />
+                    <Label
+                        x:Name="ReglaLabel" FontSize="13" HorizontalTextAlignment="Center" Text="El mayor número invita."
+                        TextColor="#5064B1" />
                 </VerticalStackLayout>
             </Border>
 
-            <Border BackgroundColor="#FFFFFF" Stroke="#DCE5DB" StrokeThickness="1" Padding="14" StrokeShape="RoundRectangle 16">
+            <Border
+                Padding="14" BackgroundColor="#FFFFFF" Stroke="#DCE5DB" StrokeShape="RoundRectangle 16"
+                StrokeThickness="1">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                    <Image Source="people_icon.png" WidthRequest="28" HeightRequest="28"/>
-                    <Label Grid.Column="1" x:Name="ParticipantesLabel" FontSize="12" TextColor="#6B7C78" VerticalTextAlignment="Center"/>
+                    <Image
+                        HeightRequest="28" Source="people_icon.png" WidthRequest="28" />
+                    <Label
+                        x:Name="ParticipantesLabel" Grid.Column="1" FontSize="12" TextColor="#6B7C78"
+                        VerticalTextAlignment="Center" />
                 </Grid>
             </Border>
 
-            <Button x:Name="LanzarButton" Text="Mezclar y lanzar" ImageSource="dice_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Lanzar_Clicked"/>
-            <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
+            <Button
+                x:Name="LanzarButton" Clicked="Lanzar_Clicked" ContentLayout="Left,10" ImageSource="dice_icon.png"
+                Style="{StaticResource VaquitaButton}"
+                Text="Mezclar y lanzar" />
+            <ActivityIndicator
+                x:Name="Cargando" IsRunning="False" IsVisible="False" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
