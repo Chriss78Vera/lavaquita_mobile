@@ -42,7 +42,7 @@ public sealed class VaquitaApi(HttpClient httpClient)
             Cuenta = new Cuenta
             {
                 Total = json.TryGetProperty("amount", out var amount) && amount.ValueKind == JsonValueKind.Number ? amount.GetDecimal() : 0,
-                Moneda = json.TryGetProperty("currency", out var currency) ? currency.GetString() ?? "COP" : "COP"
+                Moneda = "USD"
             }
         };
         sala.Participantes = json.GetProperty("participants").EnumerateArray().Select(item => new Participante
@@ -159,7 +159,7 @@ public sealed class VaquitaApi(HttpClient httpClient)
         content.Add(imageContent, "image", fileName);
         using var response = await _http.PostAsync("api/ocr/total", content);
         var json = await LeerAsync(response);
-        return new OcrResult { Total = json.GetProperty("total").GetDecimal(), Currency = json.GetProperty("currency").GetString() ?? "COP", Confidence = json.GetProperty("confidence").GetDouble() };
+        return new OcrResult { Total = json.GetProperty("total").GetDecimal(), Currency = "USD", Confidence = json.GetProperty("confidence").GetDouble() };
     }
 
     private async Task<JsonElement> EnviarJuegoAsync(string codigo, string token, string game, object body)

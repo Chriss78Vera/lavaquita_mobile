@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LaVaquita.Views.vRuleta"
+             Style="{StaticResource VaquitaPage}"
+             Title="Ruleta">
+    <ScrollView>
+        <VerticalStackLayout Padding="22,20,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
+            <Border Style="{StaticResource VaquitaPill}"><Label Text="MODO VALIENTE" TextColor="#8C6610" FontSize="10" FontAttributes="Bold"/></Border>
+            <Label Text="Ruleta de paga" Style="{StaticResource VaquitaTitle}"/>
+            <Label Text="Que el destino elija quién invita." Style="{StaticResource VaquitaSubtitle}"/>
+
+            <Border BackgroundColor="#FFF1C1" Stroke="#163832" StrokeThickness="2" Padding="18" StrokeShape="RoundRectangle 22">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="¿CUÁNTAS PERSONAS PAGAN?" Style="{StaticResource VaquitaEyebrow}"/>
+                    <Grid ColumnDefinitions="Auto,*,Auto" HorizontalOptions="Center" ColumnSpacing="24">
+                        <Button Text="−" Style="{StaticResource VaquitaSecondaryButton}" WidthRequest="52" HeightRequest="52" Padding="0" Clicked="Restar_Clicked"/>
+                        <VerticalStackLayout Grid.Column="1" WidthRequest="90" HorizontalOptions="Center">
+                            <Label x:Name="CantidadLabel" Text="1" FontSize="44" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center"/>
+                            <Label x:Name="MaximoLabel" Text="de 3" FontSize="12" TextColor="#6B7C78" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="+" Style="{StaticResource VaquitaButton}" WidthRequest="52" HeightRequest="52" Padding="0" Clicked="Sumar_Clicked"/>
+                    </Grid>
+                    <Label x:Name="AyudaLabel" Text="Elegiremos a una persona valiente." FontSize="11" TextColor="#6B7C78" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="#DDF8F4" StrokeThickness="0" Padding="16" StrokeShape="RoundRectangle 18">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Image Source="roulette.png" WidthRequest="78" HeightRequest="78"/>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="TODOS SINCRONIZADOS" FontSize="10" FontAttributes="Bold" TextColor="#27736A"/>
+                        <Label Text="La ruleta se verá igual para toda la sala." FontSize="12" TextColor="#27736A"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Button x:Name="GirarButton" Text="Girar la ruleta" ImageSource="sparkles_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Girar_Clicked"/>
+            <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

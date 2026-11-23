@@ -8,11 +8,11 @@ public class AvatarOption
 
     public static List<AvatarOption> Todos =>
     [
-        new() { Id = "diablo_huma", Nombre = "Diablo Huma", IconFile = "diablo_huma.svg" },
-        new() { Id = "condor", Nombre = "Cóndor", IconFile = "condor.svg" },
-        new() { Id = "cacao", Nombre = "Cacao", IconFile = "cacao.svg" },
-        new() { Id = "mitad_mundo", Nombre = "Mitad", IconFile = "mitad_mundo.svg" },
-        new() { Id = "volcan", Nombre = "Volcán", IconFile = "volcan.svg" },
-        new() { Id = "sombrero", Nombre = "Sombrero", IconFile = "sombrero.svg" }
+        new() { Id = "diablo_huma", Nombre = "Diablo Huma", IconFile = "diablo_huma.png" },
+        new() { Id = "condor", Nombre = "Cóndor", IconFile = "condor.png" },
+        new() { Id = "cacao", Nombre = "Cacao", IconFile = "cacao.png" },
+        new() { Id = "mitad_mundo", Nombre = "Mitad", IconFile = "mitad_mundo.png" },
+        new() { Id = "volcan", Nombre = "Volcán", IconFile = "volcan.png" },
+        new() { Id = "sombrero", Nombre = "Sombrero", IconFile = "sombrero.png" }
     ];
 }

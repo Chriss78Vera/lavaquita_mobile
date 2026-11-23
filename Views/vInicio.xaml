@@ -7,14 +7,14 @@
         <ScrollView>
             <VerticalStackLayout Spacing="0" MaximumWidthRequest="560" HorizontalOptions="Center" VerticalOptions="Center">
                 <VerticalStackLayout Padding="24,34,24,10" Spacing="10">
-                    <Border BackgroundColor="#CCFFFFFF" StrokeThickness="0" Padding="12,7" StrokeShape="RoundRectangle 99" HorizontalOptions="Center"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.svg" WidthRequest="16" HeightRequest="16"/><Label Text="CUENTAS CLARAS, PANAS FELICES" FontSize="10" FontAttributes="Bold" TextColor="#163832" CharacterSpacing="0.5" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+                    <Border BackgroundColor="#CCFFFFFF" StrokeThickness="0" Padding="12,7" StrokeShape="RoundRectangle 99" HorizontalOptions="Center"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.png" WidthRequest="16" HeightRequest="16"/><Label Text="CUENTAS CLARAS, PANAS FELICES" FontSize="10" FontAttributes="Bold" TextColor="#163832" CharacterSpacing="0.5" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
                     <Grid HeightRequest="265">
-                        <shapes:Ellipse Fill="#FFD84D" Stroke="#163832" StrokeThickness="3" WidthRequest="205" HeightRequest="205" HorizontalOptions="Center" VerticalOptions="Center">
-                            <shapes:Ellipse.Shadow><Shadow Brush="#163832" Offset="8,8" Radius="0" Opacity="1"/></shapes:Ellipse.Shadow>
-                        </shapes:Ellipse>
-                        <Border BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" WidthRequest="43" HeightRequest="43" Padding="6" StrokeShape="RoundRectangle 99" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="50" TranslationY="32"><Image Source="coin_icon.svg"/></Border>
-                        <Border BackgroundColor="#6D8DFF" Stroke="#163832" StrokeThickness="2" WidthRequest="39" HeightRequest="39" Padding="7" StrokeShape="RoundRectangle 99" HorizontalOptions="End" VerticalOptions="End" TranslationX="-48" TranslationY="-30"><Image Source="sparkles_icon.svg"/></Border>
-                        <Image Source="vaquita_mascot.svg" WidthRequest="230" HeightRequest="230" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Border BackgroundColor="#B8F340" Stroke="#163832" StrokeThickness="3" WidthRequest="205" HeightRequest="205" Padding="20" StrokeShape="RoundRectangle 30" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Border.Shadow><Shadow Brush="#163832" Offset="8,8" Radius="0" Opacity="1"/></Border.Shadow>
+                            <Image Source="appiconfg.png" Aspect="AspectFit" SemanticProperties.Description="Ícono de La Vaquita"/>
+                        </Border>
+                        <Border BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" WidthRequest="43" HeightRequest="43" Padding="6" StrokeShape="RoundRectangle 99" HorizontalOptions="Start" VerticalOptions="Start" TranslationX="50" TranslationY="32"><Image Source="coin_icon.png"/></Border>
+                        <Border BackgroundColor="#6D8DFF" Stroke="#163832" StrokeThickness="2" WidthRequest="39" HeightRequest="39" Padding="7" StrokeShape="RoundRectangle 99" HorizontalOptions="End" VerticalOptions="End" TranslationX="-48" TranslationY="-30"><Image Source="sparkles_icon.png"/></Border>
                     </Grid>
                     <Label Text="LA" FontSize="15" FontAttributes="Bold" CharacterSpacing="6" TextColor="#163832" HorizontalTextAlignment="Center"/>
                     <Label Text="VAQUITA" FontSize="46" FontAttributes="Bold" TextColor="#163832" HorizontalTextAlignment="Center" Margin="0,-10,0,0"/>
@@ -22,7 +22,7 @@
                 </VerticalStackLayout>
                 <Border BackgroundColor="#FBFAF2" StrokeThickness="0" Padding="22,24,22,24" StrokeShape="RoundRectangle 30,30,0,0">
                     <VerticalStackLayout Spacing="15">
-                        <Button Text="Crear una sala" ImageSource="people_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="CrearSala_Clicked"/>
+                        <Button Text="Crear una sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="CrearSala_Clicked"/>
                         <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
                             <Button Text="Unirme con código" BackgroundColor="Transparent" TextColor="#163832" FontAttributes="Bold" Clicked="Unirse_Clicked"/>
                             <Label Grid.Column="1" Text="•" VerticalTextAlignment="Center" TextColor="#6B7C78"/>

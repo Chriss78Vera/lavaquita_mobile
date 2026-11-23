@@ -2,12 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:models="clr-namespace:LaVaquita.Models"
              x:Class="LaVaquita.Views.vCrearSala" Style="{StaticResource VaquitaPage}" Title="Crear sala">
     <ScrollView><VerticalStackLayout Padding="22,18,22,36" Spacing="15" MaximumWidthRequest="560" HorizontalOptions="Center">
-        <Border Style="{StaticResource VaquitaPill}"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.svg" WidthRequest="16" HeightRequest="16"/><Label Text="PLAN ENTRE PANAS" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
+        <Border Style="{StaticResource VaquitaPill}"><HorizontalStackLayout Spacing="6"><Image Source="sparkles_icon.png" WidthRequest="16" HeightRequest="16"/><Label Text="PLAN ENTRE PANAS" TextColor="#27736A" FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center"/></HorizontalStackLayout></Border>
         <Label Text="¿Quién eres?" Style="{StaticResource VaquitaTitle}"/>
         <Label Text="Un nombre, un avatar y estás dentro." Style="{StaticResource VaquitaSubtitle}"/>
         <Grid HeightRequest="115">
             <Border WidthRequest="92" HeightRequest="92" BackgroundColor="#24D6C8" Stroke="#163832" StrokeThickness="2" StrokeShape="RoundRectangle 28" HorizontalOptions="Center" VerticalOptions="Center" Rotation="-3">
-                <Image Source="vaquita_mascot.svg" Margin="5"/>
+                <Image Source="vaquita_mascot.png" Margin="5"/>
                 <Border.Shadow><Shadow Brush="#163832" Offset="5,5" Radius="0" Opacity="1"/></Border.Shadow>
             </Border>
         </Grid>
@@ -23,7 +23,7 @@
                 </Border>
             </DataTemplate></CollectionView.ItemTemplate>
         </CollectionView>
-        <Button x:Name="CrearButton" Text="Crear sala" ImageSource="people_icon.svg" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Crear_Clicked"/>
+        <Button x:Name="CrearButton" Text="Crear sala" ImageSource="people_icon.png" ContentLayout="Left,10" Style="{StaticResource VaquitaButton}" Clicked="Crear_Clicked"/>
         <ActivityIndicator x:Name="Cargando" IsVisible="False" IsRunning="False"/>
     </VerticalStackLayout></ScrollView>
 </ContentPage>
