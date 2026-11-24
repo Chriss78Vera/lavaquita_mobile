@@ -73,6 +73,10 @@ public partial class vResultado : ContentPage
             TipoResultado.Dados or TipoResultado.Empate => "dice_big.png",
             _ => "vaquita_mascot.png"
         };
+        TieEqualsBadge.IsVisible = result.Tipo == TipoResultado.Empate;
+        HeroImage.IsVisible = true;
+        ValorMaximoPanel.IsVisible = result.ValorMaximo.HasValue;
+        ValorMaximoLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
         foreach (var item in result.Detalles)
         {
             var row = new Grid
@@ -126,6 +130,7 @@ public partial class vResultado : ContentPage
                     Tipo = winners.Count > 1 ? TipoResultado.Empate : TipoResultado.Dados,
                     Titulo = winners.Count > 1 ? "¡Tenemos empate!" : "Los dados decidieron",
                     Subtitulo = winners.Count > 1 ? "Vuelvan a lanzar" : "Hoy invita",
+                    ValorMaximo = high,
                     Detalles = winners.Select(item => new DetallePago { ParticipanteId = item.person.Id, Nombre = item.person.Nombre, Dados = [item.roll], Descripcion = $"Resultado: {item.roll}" }).ToList()
                 };
             }

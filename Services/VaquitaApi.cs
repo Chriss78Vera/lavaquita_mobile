@@ -143,18 +143,19 @@ public sealed class VaquitaApi(HttpClient httpClient)
             };
         }
         var results = payload.GetProperty("results").EnumerateArray().ToList();
+        var highest = results.Max(item => item.GetProperty("total").GetInt32());
         if (type == "dice_tie")
         {
             var tiedIds = payload.GetProperty("tiedParticipantIds").EnumerateArray().Select(item => item.GetString()).ToHashSet();
             return new ResultadoJuego
             {
-                Tipo = TipoResultado.Empate, Titulo = "¡Tenemos empate!", Subtitulo = "Solo ellos vuelven a lanzar",
+                Tipo = TipoResultado.Empate, Titulo = "¡Tenemos empate!", Subtitulo = "Solo ellos vuelven a lanzar", ValorMaximo = highest,
                 Detalles = results.Where(item => tiedIds.Contains(item.GetProperty("participant").GetProperty("id").GetString())).Select(DetalleDado).ToList()
             };
         }
         return new ResultadoJuego
         {
-            Tipo = TipoResultado.Dados, Titulo = "Los dados decidieron", Subtitulo = "Hoy invita",
+            Tipo = TipoResultado.Dados, Titulo = "Los dados decidieron", Subtitulo = "Hoy invita", ValorMaximo = highest,
             Detalles = results.OrderByDescending(item => item.GetProperty("total").GetInt32()).Take(1).Select(DetalleDado).ToList()
         };
     }
