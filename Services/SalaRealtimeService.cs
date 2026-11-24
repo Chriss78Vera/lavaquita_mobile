@@ -43,6 +43,11 @@ public sealed class SalaRealtimeService(Uri serverUri)
             SalaActualizada?.Invoke();
             return Task.CompletedTask;
         });
+        _socket.On("participant_left", _ =>
+        {
+            SalaActualizada?.Invoke();
+            return Task.CompletedTask;
+        });
         _socket.On("bill_updated", _ =>
         {
             SalaActualizada?.Invoke();

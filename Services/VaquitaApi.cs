@@ -30,6 +30,14 @@ public sealed class VaquitaApi(HttpClient httpClient)
         return json.GetProperty("participantToken").GetString()!;
     }
 
+    public async Task SalirSalaAsync(string codigo, string participantToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/rooms/{codigo}/participants/me");
+        request.Headers.Add("x-participant-token", participantToken);
+        using var response = await _http.SendAsync(request);
+        await LeerAsync(response);
+    }
+
     public async Task<Sala> ObtenerSalaAsync(string codigo, CancellationToken token = default)
     {
         using var response = await _http.GetAsync($"api/rooms/{codigo}", token);
