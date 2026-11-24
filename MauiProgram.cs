@@ -1,6 +1,7 @@
 using LaVaquita.Services;
 using LaVaquita.Models;
 using Microsoft.Extensions.Logging;
+using ZXing.Net.Maui.Controls;
 
 namespace LaVaquita;
 
@@ -9,7 +10,7 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
-        builder.UseMauiApp<App>().ConfigureFonts(fonts =>
+        builder.UseMauiApp<App>().UseBarcodeReader().ConfigureFonts(fonts =>
         {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
@@ -19,12 +20,14 @@ public static class MauiProgram
         string apiUrl = DeviceInfo.Platform == DevicePlatform.Android
             ? "http://10.0.2.2:3000/"
             : "http://localhost:3000/";
+        var apiUri = new Uri(apiUrl);
         builder.Services.AddSingleton(new HttpClient
         {
-            BaseAddress = new Uri(apiUrl),
+            BaseAddress = apiUri,
             Timeout = TimeSpan.FromSeconds(35)
         });
         builder.Services.AddSingleton<VaquitaApi>();
+        builder.Services.AddSingleton(new SalaRealtimeService(apiUri));
         builder.Services.AddSingleton<AppSession>();
 
 #if DEBUG

@@ -7,14 +7,16 @@ public partial class vRuleta : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService? _realtime;
     private readonly int _maximo;
     private int _cantidad = 1;
 
-    public vRuleta(VaquitaApi api, AppSession session)
+    public vRuleta(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
     {
         InitializeComponent();
         _api = api;
         _session = session;
+        _realtime = realtime;
         _maximo = Math.Max(1, session.Participantes.Count - 1);
         MaximoLabel.Text = $"de {_maximo}";
         ActualizarCantidad();
@@ -49,7 +51,7 @@ public partial class vRuleta : ContentPage
             _session.UltimoResultado = _session.EsCompartida
                 ? await _api.RuletaAsync(_session.CodigoSala, _session.HostToken, _cantidad)
                 : CrearResultadoLocal();
-            await Navigation.PushAsync(new vResultado(_api, _session));
+            await Navigation.PushAsync(new vResultado(_api, _session, _realtime));
         }
         catch (Exception error)
         {

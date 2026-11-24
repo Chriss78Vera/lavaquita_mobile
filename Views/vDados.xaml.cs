@@ -7,12 +7,14 @@ public partial class vDados : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService? _realtime;
 
-    public vDados(VaquitaApi api, AppSession session)
+    public vDados(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
     {
         InitializeComponent();
         _api = api;
         _session = session;
+        _realtime = realtime;
         ParticipantesLabel.Text = $"{session.Participantes.Count} participantes lanzarán los dados.";
         if (session.Participantes.Count > 6) ReglaLabel.Text = "Usaremos dos dados por persona.";
     }
@@ -26,7 +28,7 @@ public partial class vDados : ContentPage
             _session.UltimoResultado = _session.EsCompartida
                 ? await _api.DadosAsync(_session.CodigoSala, _session.HostToken)
                 : CrearResultadoLocal(_session.Participantes);
-            await Navigation.PushAsync(new vResultado(_api, _session));
+            await Navigation.PushAsync(new vResultado(_api, _session, _realtime));
         }
         catch (Exception error)
         {

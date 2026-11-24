@@ -7,11 +7,48 @@ public partial class vResultado : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService? _realtime;
 
-    public vResultado(VaquitaApi api, AppSession session)
+    public vResultado(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
     {
-        InitializeComponent(); _api = api; _session = session; Mostrar();
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime; Mostrar();
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (_session.EsCompartida && _realtime is not null)
+        {
+            _realtime.JuegoRecibido += Realtime_JuegoRecibido;
+            _realtime.SalaFinalizada += Realtime_SalaFinalizada;
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        if (_realtime is not null)
+        {
+            _realtime.JuegoRecibido -= Realtime_JuegoRecibido;
+            _realtime.SalaFinalizada -= Realtime_SalaFinalizada;
+        }
+        base.OnDisappearing();
+    }
+
+    private void Realtime_SalaFinalizada(string mensaje) => MainThread.BeginInvokeOnMainThread(async () =>
+    {
+        await DisplayAlertAsync("Sala finalizada", mensaje, "Aceptar");
+        _session.Reiniciar();
+        await Navigation.PopToRootAsync();
+    });
+
+    private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) => MainThread.BeginInvokeOnMainThread(() =>
+    {
+        var eventId = game.TryGetProperty("id", out var idNode) ? idNode.GetString() ?? string.Empty : string.Empty;
+        if (!string.IsNullOrWhiteSpace(eventId) && eventId == _session.UltimoEventoId) return;
+        _session.UltimoEventoId = eventId;
+        _session.UltimoResultado = _api.ConvertirEvento(game);
+        Mostrar();
+    });
 
     private void Mostrar()
     {

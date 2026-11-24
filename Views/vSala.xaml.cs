@@ -8,29 +8,72 @@ public partial class vSala : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService _realtime;
     private CancellationTokenSource? _polling;
     private Sala? _sala;
+    private bool _eventosSuscritos;
+    private bool _navegandoResultado;
 
-    public vSala(VaquitaApi api, AppSession session)
+    public vSala(VaquitaApi api, AppSession session, SalaRealtimeService realtime)
     {
-        InitializeComponent(); _api = api; _session = session;
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime;
         CodigoLabel.Text = session.CodigoSala;
         CodigoGrandeLabel.Text = session.CodigoSala;
         QrImage.Source = ImageSource.FromUri(new Uri(api.ObtenerUrlQr(session.CodigoSala)));
-        CuentaPanel.IsVisible = session.EsAnfitrion;
-        CerrarSalaButton.IsVisible = session.EsAnfitrion;
-        EstadoLabel.Text = session.EsAnfitrion ? "ANFITRIÓN EN VIVO" : "CONECTADO EN VIVO";
-        ContinuarButton.Text = session.EsAnfitrion ? "Elegir cómo pagamos" : "Ver juego o resultado";
+        QrPanel.IsVisible = CuentaPanel.IsVisible = CerrarSalaButton.IsVisible = ContinuarButton.IsVisible = session.EsAnfitrion;
+        ParticipantePanel.IsVisible = !session.EsAnfitrion;
+        EstadoLabel.Text = "CONECTANDO";
+        TituloSalaLabel.Text = session.EsAnfitrion ? "Tu sala está lista" : "Sala del anfitrión";
+        ContinuarButton.Text = "Elegir cómo pagamos";
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
-        base.OnAppearing(); IniciarActualizacion();
+        base.OnAppearing();
+        SuscribirEventos();
+        IniciarActualizacion();
+        await ActivarTiempoRealAsync();
     }
 
     protected override void OnDisappearing()
     {
-        _polling?.Cancel(); base.OnDisappearing();
+        _polling?.Cancel();
+        DesuscribirEventos();
+        base.OnDisappearing();
+    }
+
+    private void SuscribirEventos()
+    {
+        if (_eventosSuscritos) return;
+        _realtime.SalaActualizada += Realtime_SalaActualizada;
+        _realtime.JuegoRecibido += Realtime_JuegoRecibido;
+        _realtime.SalaFinalizada += Realtime_SalaFinalizada;
+        _realtime.ConexionCambiada += Realtime_ConexionCambiada;
+        _eventosSuscritos = true;
+    }
+
+    private void DesuscribirEventos()
+    {
+        if (!_eventosSuscritos) return;
+        _realtime.SalaActualizada -= Realtime_SalaActualizada;
+        _realtime.JuegoRecibido -= Realtime_JuegoRecibido;
+        _realtime.SalaFinalizada -= Realtime_SalaFinalizada;
+        _realtime.ConexionCambiada -= Realtime_ConexionCambiada;
+        _eventosSuscritos = false;
+    }
+
+    private async Task ActivarTiempoRealAsync()
+    {
+        try
+        {
+            await ActualizarSalaAsync();
+            await _realtime.ConectarAsync(_session.CodigoSala);
+        }
+        catch (Exception error)
+        {
+            Realtime_ConexionCambiada(false);
+            await DisplayAlertAsync("Conexión limitada", $"Se seguirá intentando sincronizar. {error.Message}", "Aceptar");
+        }
     }
 
     private void IniciarActualizacion()
@@ -40,17 +83,45 @@ public partial class vSala : ContentPage
         {
             while (!token.IsCancellationRequested)
             {
-                try
-                {
-                    var sala = await _api.ObtenerSalaAsync(_session.CodigoSala, token);
-                    await MainThread.InvokeOnMainThreadAsync(() => MostrarSala(sala));
-                }
+                try { await ActualizarSalaAsync(token); }
                 catch (OperationCanceledException) { break; }
                 catch { }
-                try { await Task.Delay(5000, token); } catch { break; }
+                try { await Task.Delay(15000, token); } catch { break; }
             }
         }, token);
     }
+
+    private async Task ActualizarSalaAsync(CancellationToken token = default)
+    {
+        var sala = await _api.ObtenerSalaAsync(_session.CodigoSala, token);
+        await MainThread.InvokeOnMainThreadAsync(() => MostrarSala(sala));
+    }
+
+    private void Realtime_SalaActualizada() => _ = Task.Run(async () =>
+    {
+        try { await ActualizarSalaAsync(); } catch { }
+    });
+
+    private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) =>
+        MainThread.BeginInvokeOnMainThread(async () => await MostrarResultadoAsync(game));
+
+    private void Realtime_ConexionCambiada(bool conectado) => MainThread.BeginInvokeOnMainThread(() =>
+    {
+        EstadoLabel.Text = conectado
+            ? (_session.EsAnfitrion ? "ANFITRIÓN EN VIVO" : "CONECTADO EN VIVO")
+            : "RECONECTANDO";
+        SyncTitleLabel.Text = conectado ? "Todo sincronizado" : "Buscando conexión";
+        SyncDetailLabel.Text = conectado
+            ? "Los cambios aparecerán para todos al instante"
+            : "Conservamos el último estado mientras vuelves";
+    });
+
+    private void Realtime_SalaFinalizada(string mensaje) => MainThread.BeginInvokeOnMainThread(async () =>
+    {
+        await DisplayAlertAsync("Sala finalizada", mensaje, "Aceptar");
+        _session.Reiniciar();
+        await Navigation.PopToRootAsync();
+    });
 
     private void MostrarSala(Sala sala)
     {
@@ -88,8 +159,26 @@ public partial class vSala : ContentPage
         {
             TotalConfirmadoPanel.IsVisible = true; TotalConfirmadoLabel.Text = MoneyFormat.Format(sala.Cuenta.Total, sala.Cuenta.Moneda);
             ContinuarButton.IsEnabled = true;
+            if (!_session.EsAnfitrion)
+                ParticipanteEsperaLabel.Text = "Cuenta confirmada. El resultado aparecerá aquí apenas el anfitrión juegue.";
         }
         else ContinuarButton.IsEnabled = false;
+
+        if (!_session.EsAnfitrion && sala.UltimoEvento.HasValue)
+            _ = MostrarResultadoAsync(sala.UltimoEvento.Value);
+    }
+
+    private async Task MostrarResultadoAsync(System.Text.Json.JsonElement game)
+    {
+        if (_session.EsAnfitrion || _navegandoResultado) return;
+        var eventId = game.TryGetProperty("id", out var idNode) ? idNode.GetString() ?? string.Empty : string.Empty;
+        if (!string.IsNullOrWhiteSpace(eventId) && eventId == _session.UltimoEventoId) return;
+
+        _session.UltimoEventoId = eventId;
+        _session.UltimoResultado = _api.ConvertirEvento(game);
+        _navegandoResultado = true;
+        try { await Navigation.PushAsync(new vResultado(_api, _session, _realtime)); }
+        finally { _navegandoResultado = false; }
     }
 
     private async void Camara_Clicked(object? sender, EventArgs e) => await SeleccionarFactura(true);
@@ -123,7 +212,7 @@ public partial class vSala : ContentPage
             Cargando.IsVisible = Cargando.IsRunning = true;
             await using var stream = await foto.OpenReadAsync();
             var ocr = await _api.LeerFacturaAsync(stream, foto.FileName);
-            var cuentaDetectada = new Cuenta { Total = ocr.Total, Moneda = "USD", FueDetectadaPorOcr = true, ConfianzaOcr = ocr.Confidence };
+            var cuentaDetectada = new Cuenta { Total = ocr.Total, Moneda = ocr.Currency, FueDetectadaPorOcr = true, ConfianzaOcr = ocr.Confidence };
             await Navigation.PushAsync(new vRevisarCuenta(_api, _session, cuentaDetectada));
         }
         catch (PermissionException) { await DisplayAlertAsync("Permiso rechazado", "Puedes usar la galería o escribir el total.", "Aceptar"); }
@@ -156,12 +245,7 @@ public partial class vSala : ContentPage
     {
         if (_sala is null || _sala.Cuenta.Total <= 0) { await DisplayAlertAsync("Aún no hay total", "El anfitrión debe confirmar la cuenta.", "Aceptar"); return; }
         _session.Cuenta = _sala.Cuenta; _session.Participantes = _sala.Participantes;
-        if (!_session.EsAnfitrion && _sala.UltimoEvento.HasValue)
-        {
-            _session.UltimoResultado = _api.ConvertirEvento(_sala.UltimoEvento.Value);
-            await Navigation.PushAsync(new vResultado(_api, _session)); return;
-        }
-        await Navigation.PushAsync(new vJuegos(_api, _session));
+        await Navigation.PushAsync(new vJuegos(_api, _session, _realtime));
     }
 
     private async void CerrarSala_Clicked(object? sender, EventArgs e)
