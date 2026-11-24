@@ -1,5 +1,6 @@
 using LaVaquita.Models;
 using LaVaquita.Services;
+using LaVaquita.Utils;
 
 namespace LaVaquita.Views;
 
@@ -8,10 +9,14 @@ public partial class vResultado : ContentPage
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
     private readonly SalaRealtimeService? _realtime;
+    private readonly PartidaLocalStore? _localStore;
+    private CancellationTokenSource? _gameAnimationCancellation;
+    private Task _gameAnimationTask = Task.CompletedTask;
+    private static readonly Color DefaultPageColor = Color.FromArgb("#FBFAF2");
 
-    public vResultado(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
+    public vResultado(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null, PartidaLocalStore? localStore = null)
     {
-        InitializeComponent(); _api = api; _session = session; _realtime = realtime;
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime; _localStore = localStore;
         ParticipanteActions.IsVisible = session.EsCompartida && !session.EsAnfitrion;
         AnfitrionActions.IsVisible = session.EsCompartida && session.EsAnfitrion;
         NuevaLocalButton.IsVisible = !session.EsCompartida;
@@ -24,8 +29,10 @@ public partial class vResultado : ContentPage
         if (_session.EsCompartida && _realtime is not null)
         {
             _realtime.JuegoRecibido += Realtime_JuegoRecibido;
+            _realtime.JuegoIniciado += Realtime_JuegoIniciado;
             _realtime.SalaFinalizada += Realtime_SalaFinalizada;
         }
+        if (!string.IsNullOrWhiteSpace(_session.JuegoEnCurso)) IniciarAnimacionJuego(_session.JuegoEnCurso);
     }
 
     protected override void OnDisappearing()
@@ -33,8 +40,10 @@ public partial class vResultado : ContentPage
         if (_realtime is not null)
         {
             _realtime.JuegoRecibido -= Realtime_JuegoRecibido;
+            _realtime.JuegoIniciado -= Realtime_JuegoIniciado;
             _realtime.SalaFinalizada -= Realtime_SalaFinalizada;
         }
+        _gameAnimationCancellation?.Cancel();
         base.OnDisappearing();
     }
 
@@ -46,19 +55,67 @@ public partial class vResultado : ContentPage
         await Navigation.PopToRootAsync();
     });
 
-    private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) => MainThread.BeginInvokeOnMainThread(() =>
+    private void Realtime_JuegoIniciado(string type) => MainThread.BeginInvokeOnMainThread(() => IniciarAnimacionJuego(type));
+
+    private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) => MainThread.BeginInvokeOnMainThread(async () =>
     {
         var eventId = game.TryGetProperty("id", out var idNode) ? idNode.GetString() ?? string.Empty : string.Empty;
         if (!string.IsNullOrWhiteSpace(eventId) && eventId == _session.UltimoEventoId) return;
+        try { await _gameAnimationTask; } catch (OperationCanceledException) { }
         _session.UltimoEventoId = eventId;
+        _session.JuegoEnCurso = string.Empty;
         _session.UltimoResultado = _api.ConvertirEvento(game);
         Mostrar();
     });
+
+    private void IniciarAnimacionJuego(string type)
+    {
+        _gameAnimationCancellation?.Cancel();
+        _gameAnimationCancellation = new CancellationTokenSource();
+        _session.JuegoEnCurso = type;
+        _gameAnimationTask = AnimarJuegoAsync(type, _gameAnimationCancellation.Token);
+    }
+
+    private async Task AnimarJuegoAsync(string type, CancellationToken token)
+    {
+        var isDice = type == "dice";
+        HeroImage.Source = isDice ? "dice_big.png" : "roulette.png";
+        HeroImage.IsVisible = true;
+        TieEqualsBadge.IsVisible = false;
+        HeroDiceValueLabel.IsVisible = isDice;
+        ValorMaximoPanel.IsVisible = false;
+        DetallesLayout.Children.Clear();
+        DesempateButton.IsVisible = ParticipanteActions.IsVisible = AnfitrionActions.IsVisible = NuevaLocalButton.IsVisible = false;
+        EyebrowLabel.Text = isDice ? "DADOS EN EL AIRE" : "LA RULETA ESTÁ GIRANDO";
+        TituloLabel.Text = isDice ? "Lanzando los dados" : "Buscando a los valientes";
+        SubtituloLabel.Text = "Todos en la sala lo están viendo";
+
+        for (var index = 0; index < 12; index++)
+        {
+            token.ThrowIfCancellationRequested();
+            BackgroundColor = GameColorPalette.ForIndex(index);
+            if (isDice) HeroDiceValueLabel.Text = Random.Shared.Next(1, 7).ToString();
+            await Task.WhenAll(
+                HeroImage.RotateToAsync(HeroImage.Rotation + (isDice ? 95 : 150), 130, Easing.CubicInOut),
+                HeroImage.ScaleToAsync(index % 2 == 0 ? 1.1 : 0.94, 130, Easing.CubicInOut),
+                HeroImage.TranslateToAsync(isDice ? (index % 2 == 0 ? 14 : -14) : 0, isDice ? -12 : 0, 130, Easing.CubicInOut));
+        }
+
+        await Task.WhenAll(
+            HeroImage.RotateToAsync(0, 150, Easing.CubicOut),
+            HeroImage.ScaleToAsync(1, 150, Easing.CubicOut),
+            HeroImage.TranslateToAsync(0, 0, 150, Easing.CubicOut));
+        BackgroundColor = DefaultPageColor;
+    }
 
     private void Mostrar()
     {
         var result = _session.UltimoResultado;
         if (result is null) return;
+        BackgroundColor = DefaultPageColor;
+        ParticipanteActions.IsVisible = _session.EsCompartida && !_session.EsAnfitrion;
+        AnfitrionActions.IsVisible = _session.EsCompartida && _session.EsAnfitrion;
+        NuevaLocalButton.IsVisible = !_session.EsCompartida;
         TituloLabel.Text = result.Titulo; SubtituloLabel.Text = result.Subtitulo; DetallesLayout.Children.Clear();
         EyebrowLabel.Text = result.Tipo switch
         {
@@ -74,6 +131,8 @@ public partial class vResultado : ContentPage
             _ => "vaquita_mascot.png"
         };
         TieEqualsBadge.IsVisible = result.Tipo == TipoResultado.Empate;
+        HeroDiceValueLabel.IsVisible = result.Tipo == TipoResultado.Dados && result.ValorMaximo.HasValue;
+        HeroDiceValueLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
         HeroImage.IsVisible = true;
         ValorMaximoPanel.IsVisible = result.ValorMaximo.HasValue;
         ValorMaximoLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
@@ -87,7 +146,11 @@ public partial class vResultado : ContentPage
             row.Add(new Border
             {
                 WidthRequest = 48, HeightRequest = 48, Padding = 0,
-                BackgroundColor = result.Tipo == TipoResultado.Dados ? Color.FromArgb("#FFD84D") : Color.FromArgb("#B8F340"),
+                BackgroundColor = result.Tipo == TipoResultado.Ruleta
+                    ? GameColorPalette.ForParticipant(item.ParticipanteId, _session.Participantes)
+                    : result.Tipo is TipoResultado.Dados or TipoResultado.Empate
+                        ? Color.FromArgb("#FFD84D")
+                        : Color.FromArgb("#B8F340"),
                 Stroke = Color.FromArgb("#163832"), StrokeThickness = 2,
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 },
                 Content = new Label { Text = item.Nombre[..1].ToUpperInvariant(), FontSize = 20, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#163832"), HorizontalTextAlignment = TextAlignment.Center, VerticalTextAlignment = TextAlignment.Center }
@@ -119,7 +182,10 @@ public partial class vResultado : ContentPage
         try
         {
             if (_session.EsCompartida)
+            {
                 _session.UltimoResultado = await _api.DadosAsync(_session.CodigoSala, _session.HostToken, ids);
+                try { await _gameAnimationTask; } catch (OperationCanceledException) { }
+            }
             else
             {
                 var participants = _session.Participantes.Where(item => ids.Contains(item.Id)).ToList();
@@ -134,6 +200,7 @@ public partial class vResultado : ContentPage
                     Detalles = winners.Select(item => new DetallePago { ParticipanteId = item.person.Id, Nombre = item.person.Nombre, Dados = [item.roll], Descripcion = $"Resultado: {item.roll}" }).ToList()
                 };
             }
+            if (!_session.EsCompartida && _localStore is not null) await _localStore.GuardarAsync(_session);
             Mostrar();
         }
         catch (Exception error) { await DisplayAlertAsync("No se pudo desempatar", error.Message, "Aceptar"); }
@@ -159,7 +226,7 @@ public partial class vResultado : ContentPage
         var juegosIndex = stack.FindLastIndex(page => page is vJuegos);
         if (juegosIndex < 0)
         {
-            await Navigation.PushAsync(new vJuegos(_api, _session, _realtime));
+            await Navigation.PushAsync(new vJuegos(_api, _session, _realtime, _localStore));
             return;
         }
 
@@ -200,6 +267,7 @@ public partial class vResultado : ContentPage
 
     private async void NuevaLocal_Clicked(object? sender, EventArgs e)
     {
+        if (_localStore is not null) await _localStore.LimpiarAsync();
         _session.Reiniciar();
         await Navigation.PopToRootAsync();
     }

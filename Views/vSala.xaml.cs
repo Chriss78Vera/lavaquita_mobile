@@ -47,6 +47,7 @@ public partial class vSala : ContentPage
         if (_eventosSuscritos) return;
         _realtime.SalaActualizada += Realtime_SalaActualizada;
         _realtime.JuegoRecibido += Realtime_JuegoRecibido;
+        _realtime.JuegoIniciado += Realtime_JuegoIniciado;
         _realtime.SalaFinalizada += Realtime_SalaFinalizada;
         _realtime.ConexionCambiada += Realtime_ConexionCambiada;
         _eventosSuscritos = true;
@@ -57,6 +58,7 @@ public partial class vSala : ContentPage
         if (!_eventosSuscritos) return;
         _realtime.SalaActualizada -= Realtime_SalaActualizada;
         _realtime.JuegoRecibido -= Realtime_JuegoRecibido;
+        _realtime.JuegoIniciado -= Realtime_JuegoIniciado;
         _realtime.SalaFinalizada -= Realtime_SalaFinalizada;
         _realtime.ConexionCambiada -= Realtime_ConexionCambiada;
         _eventosSuscritos = false;
@@ -104,6 +106,15 @@ public partial class vSala : ContentPage
 
     private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) =>
         MainThread.BeginInvokeOnMainThread(async () => await MostrarResultadoAsync(game));
+
+    private void Realtime_JuegoIniciado(string type) => MainThread.BeginInvokeOnMainThread(async () =>
+    {
+        if (_session.EsAnfitrion || _navegandoResultado) return;
+        _session.JuegoEnCurso = type;
+        _navegandoResultado = true;
+        try { await Navigation.PushAsync(new vResultado(_api, _session, _realtime)); }
+        finally { _navegandoResultado = false; }
+    });
 
     private void Realtime_ConexionCambiada(bool conectado) => MainThread.BeginInvokeOnMainThread(() =>
     {

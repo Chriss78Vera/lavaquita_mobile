@@ -8,13 +8,15 @@ public partial class vDados : ContentPage
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
     private readonly SalaRealtimeService? _realtime;
+    private readonly PartidaLocalStore? _localStore;
 
-    public vDados(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
+    public vDados(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null, PartidaLocalStore? localStore = null)
     {
         InitializeComponent();
         _api = api;
         _session = session;
         _realtime = realtime;
+        _localStore = localStore;
         ParticipantesLabel.Text = $"{session.Participantes.Count} participantes lanzarán los dados.";
         if (session.Participantes.Count > 6) ReglaLabel.Text = "Usaremos dos dados por persona.";
     }
@@ -23,7 +25,7 @@ public partial class vDados : ContentPage
     {
         LanzarButton.IsEnabled = false;
         Cargando.IsVisible = Cargando.IsRunning = true;
-        LanzandoLabel.IsVisible = RollingValuePanel.IsVisible = true;
+        LanzandoLabel.IsVisible = true;
         using var animationCancellation = new CancellationTokenSource();
         var animationTask = AnimarDadosAsync(animationCancellation.Token);
         try
@@ -34,7 +36,8 @@ public partial class vDados : ContentPage
                 : Task.FromResult(CrearResultadoLocal(_session.Participantes));
             _session.UltimoResultado = await resultTask;
             await minimumAnimation;
-            await Navigation.PushAsync(new vResultado(_api, _session, _realtime));
+            if (!_session.EsCompartida && _localStore is not null) await _localStore.GuardarAsync(_session);
+            await Navigation.PushAsync(new vResultado(_api, _session, _realtime, _localStore));
         }
         catch (Exception error)
         {
@@ -47,7 +50,8 @@ public partial class vDados : ContentPage
             await RestablecerDadoAsync();
             LanzarButton.IsEnabled = true;
             Cargando.IsVisible = Cargando.IsRunning = false;
-            LanzandoLabel.IsVisible = RollingValuePanel.IsVisible = false;
+            LanzandoLabel.IsVisible = false;
+            RollingValueLabel.Text = "?";
         }
     }
 

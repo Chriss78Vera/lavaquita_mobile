@@ -74,7 +74,7 @@
                     <Image
                         HeightRequest="20" Source="check_icon.png" WidthRequest="20" />
                     <Label
-                        FontAttributes="Bold" FontSize="12" Text="Sin registro y sin guardar tus datos" TextColor="#27736A"
+                        FontAttributes="Bold" FontSize="12" Text="Sin registro; guardado solo en este teléfono" TextColor="#27736A"
                         VerticalTextAlignment="Center" />
                 </HorizontalStackLayout>
             </Border>

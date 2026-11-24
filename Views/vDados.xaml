@@ -22,12 +22,11 @@
                             x:Name="DiceImage" HeightRequest="150" Source="dice_big.png"
                             VerticalOptions="Center" WidthRequest="150" />
                         <Border
-                            x:Name="RollingValuePanel" Padding="12,5" BackgroundColor="#163832"
-                            HorizontalOptions="Center" IsVisible="False" StrokeShape="RoundRectangle 99"
-                            StrokeThickness="0" TranslationY="65" VerticalOptions="Center">
+                            x:Name="RollingValuePanel" Padding="0" BackgroundColor="Transparent"
+                            HorizontalOptions="Center" StrokeThickness="0" VerticalOptions="Center">
                             <Label
-                                x:Name="RollingValueLabel" FontAttributes="Bold" FontSize="18"
-                                Text="1" TextColor="#B8F340" />
+                                x:Name="RollingValueLabel" FontAttributes="Bold" FontSize="54"
+                                Text="?" TextColor="#163832" />
                         </Border>
                     </Grid>
                     <Label Style="{StaticResource VaquitaEyebrow}" Text="UNA RONDA, UN GANADOR" />

@@ -11,6 +11,7 @@ public sealed class SalaRealtimeService(Uri serverUri)
 
     public event Action? SalaActualizada;
     public event Action<JsonElement>? JuegoRecibido;
+    public event Action<string>? JuegoIniciado;
     public event Action<string>? SalaFinalizada;
     public event Action<bool>? ConexionCambiada;
 
@@ -57,6 +58,13 @@ public sealed class SalaRealtimeService(Uri serverUri)
         {
             var game = response.GetValue<JsonElement>(0).Clone();
             JuegoRecibido?.Invoke(game);
+            return Task.CompletedTask;
+        });
+        _socket.On("game_started", response =>
+        {
+            var payload = response.GetValue<JsonElement>(0);
+            var type = payload.TryGetProperty("type", out var typeNode) ? typeNode.GetString() : null;
+            if (!string.IsNullOrWhiteSpace(type)) JuegoIniciado?.Invoke(type);
             return Task.CompletedTask;
         });
         _socket.On("room_closed", _ =>

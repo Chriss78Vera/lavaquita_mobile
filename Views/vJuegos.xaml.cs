@@ -9,10 +9,11 @@ public partial class vJuegos : ContentPage
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
     private readonly SalaRealtimeService? _realtime;
+    private readonly PartidaLocalStore? _localStore;
 
-    public vJuegos(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
+    public vJuegos(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null, PartidaLocalStore? localStore = null)
     {
-        InitializeComponent(); _api = api; _session = session; _realtime = realtime;
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime; _localStore = localStore;
         ResumenLabel.Text = $"Cuenta de {MoneyFormat.Format(session.Cuenta.Total, session.Cuenta.Moneda)} · {session.Participantes.Count} personas";
         DivisionHintLabel.Text = $"Aprox. {MoneyFormat.Format(session.Cuenta.Total / Math.Max(1, session.Participantes.Count), session.Cuenta.Moneda)} por persona";
         if (session.EsCompartida && !session.EsAnfitrion)
@@ -52,14 +53,14 @@ public partial class vJuegos : ContentPage
 
     private async void Ruleta_Clicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new vRuleta(_api, _session, _realtime));
+        await Navigation.PushAsync(new vRuleta(_api, _session, _realtime, _localStore));
     }
 
     private void RuletaCard_Tapped(object? sender, TappedEventArgs e) => Ruleta_Clicked(sender, e);
 
     private async void Dados_Clicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new vDados(_api, _session, _realtime));
+        await Navigation.PushAsync(new vDados(_api, _session, _realtime, _localStore));
     }
 
     private void DadosCard_Tapped(object? sender, TappedEventArgs e) => Dados_Clicked(sender, e);
@@ -67,7 +68,12 @@ public partial class vJuegos : ContentPage
     private async Task Ejecutar(Func<Task> action)
     {
         Cargando.IsVisible = Cargando.IsRunning = true;
-        try { await action(); await Navigation.PushAsync(new vResultado(_api, _session, _realtime)); }
+        try
+        {
+            await action();
+            if (!_session.EsCompartida && _localStore is not null) await _localStore.GuardarAsync(_session);
+            await Navigation.PushAsync(new vResultado(_api, _session, _realtime, _localStore));
+        }
         catch (Exception error) { await DisplayAlertAsync("No se pudo jugar", error.Message, "Aceptar"); }
         finally { Cargando.IsVisible = Cargando.IsRunning = false; }
     }

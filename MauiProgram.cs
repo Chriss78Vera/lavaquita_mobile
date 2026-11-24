@@ -28,6 +28,7 @@ public static class MauiProgram
         });
         builder.Services.AddSingleton<VaquitaApi>();
         builder.Services.AddSingleton(new SalaRealtimeService(apiUri));
+        builder.Services.AddSingleton<PartidaLocalStore>();
         builder.Services.AddSingleton<AppSession>();
 
 #if DEBUG

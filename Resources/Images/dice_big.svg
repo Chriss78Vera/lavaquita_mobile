@@ -2,8 +2,5 @@
   <ellipse cx="121" cy="194" rx="84" ry="15" fill="#163832" opacity=".12"/>
   <g transform="rotate(-8 120 106)">
     <rect x="41" y="25" width="158" height="158" rx="34" fill="#FFD84D" stroke="#163832" stroke-width="9"/>
-    <circle cx="79" cy="65" r="13" fill="#163832"/><circle cx="161" cy="65" r="13" fill="#163832"/>
-    <circle cx="120" cy="104" r="13" fill="#163832"/>
-    <circle cx="79" cy="145" r="13" fill="#163832"/><circle cx="161" cy="145" r="13" fill="#163832"/>
   </g>
 </svg>

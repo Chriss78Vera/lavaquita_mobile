@@ -8,10 +8,11 @@ public partial class vModoRapido : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly PartidaLocalStore _localStore;
 
-    public vModoRapido(VaquitaApi api, AppSession session)
+    public vModoRapido(VaquitaApi api, AppSession session, PartidaLocalStore localStore)
     {
-        InitializeComponent(); _api = api; _session = session;
+        InitializeComponent(); _api = api; _session = session; _localStore = localStore;
     }
 
     private async void Continuar_Clicked(object? sender, EventArgs e)
@@ -26,6 +27,7 @@ public partial class vModoRapido : ContentPage
         _session.Cuenta.Total = total;
         _session.Cuenta.Moneda = "USD";
         _session.Participantes = nombres.Select((nombre, index) => new Participante { Id = $"local-{index}", Nombre = nombre }).ToList();
-        await Navigation.PushAsync(new vJuegos(_api, _session));
+        await _localStore.GuardarAsync(_session);
+        await Navigation.PushAsync(new vJuegos(_api, _session, null, _localStore));
     }
 }
