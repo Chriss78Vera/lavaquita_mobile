@@ -30,6 +30,14 @@ public sealed class VaquitaApi(HttpClient httpClient)
         return json.GetProperty("participantToken").GetString()!;
     }
 
+    public async Task SalirSalaAsync(string codigo, string participantToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/rooms/{codigo}/participants/me");
+        request.Headers.Add("x-participant-token", participantToken);
+        using var response = await _http.SendAsync(request);
+        await LeerAsync(response);
+    }
+
     public async Task<Sala> ObtenerSalaAsync(string codigo, CancellationToken token = default)
     {
         using var response = await _http.GetAsync($"api/rooms/{codigo}", token);
@@ -135,18 +143,19 @@ public sealed class VaquitaApi(HttpClient httpClient)
             };
         }
         var results = payload.GetProperty("results").EnumerateArray().ToList();
+        var highest = results.Max(item => item.GetProperty("total").GetInt32());
         if (type == "dice_tie")
         {
             var tiedIds = payload.GetProperty("tiedParticipantIds").EnumerateArray().Select(item => item.GetString()).ToHashSet();
             return new ResultadoJuego
             {
-                Tipo = TipoResultado.Empate, Titulo = "¡Tenemos empate!", Subtitulo = "Solo ellos vuelven a lanzar",
+                Tipo = TipoResultado.Empate, Titulo = "¡Tenemos empate!", Subtitulo = "Solo ellos vuelven a lanzar", ValorMaximo = highest,
                 Detalles = results.Where(item => tiedIds.Contains(item.GetProperty("participant").GetProperty("id").GetString())).Select(DetalleDado).ToList()
             };
         }
         return new ResultadoJuego
         {
-            Tipo = TipoResultado.Dados, Titulo = "Los dados decidieron", Subtitulo = "Hoy invita",
+            Tipo = TipoResultado.Dados, Titulo = "Los dados decidieron", Subtitulo = "Hoy invita", ValorMaximo = highest,
             Detalles = results.OrderByDescending(item => item.GetProperty("total").GetInt32()).Take(1).Select(DetalleDado).ToList()
         };
     }

@@ -31,6 +31,15 @@
                     <Image
                         x:Name="HeroImage" HeightRequest="180" HorizontalOptions="Center" Source="vaquita_mascot.png"
                         WidthRequest="180" />
+                    <Border
+                        x:Name="TieEqualsBadge" Padding="0" BackgroundColor="#F7F7F2" HeightRequest="82"
+                        HorizontalOptions="Center" IsVisible="False" Stroke="#163832"
+                        StrokeShape="RoundRectangle 22" StrokeThickness="4" VerticalOptions="Center"
+                        WidthRequest="82">
+                        <Label
+                            FontAttributes="Bold" FontSize="52" HorizontalTextAlignment="Center"
+                            Text="=" TextColor="#163832" VerticalTextAlignment="Center" />
+                    </Border>
                 </Grid>
                 <Border Style="{StaticResource VaquitaPill}">
                     <Label
@@ -39,6 +48,19 @@
                 </Border>
                 <Label x:Name="TituloLabel" Style="{StaticResource VaquitaTitle}" />
                 <Label x:Name="SubtituloLabel" Style="{StaticResource VaquitaSubtitle}" />
+                <Border
+                    x:Name="ValorMaximoPanel" Padding="14,9" BackgroundColor="#E2E7FF"
+                    HorizontalOptions="Center" IsVisible="False" Stroke="#5064B1"
+                    StrokeShape="RoundRectangle 16" StrokeThickness="2">
+                    <HorizontalStackLayout Spacing="9">
+                        <Label
+                            FontAttributes="Bold" FontSize="11" Text="VALOR MÁS ALTO" TextColor="#5064B1"
+                            VerticalTextAlignment="Center" />
+                        <Label
+                            x:Name="ValorMaximoLabel" FontAttributes="Bold" FontSize="26"
+                            TextColor="#163832" VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                </Border>
                 <VerticalStackLayout
                     x:Name="DetallesLayout" Margin="0,5,0,0" Spacing="12" />
                 <Border
@@ -59,9 +81,39 @@
                     IsVisible="False"
                     Style="{StaticResource VaquitaSecondaryButton}"
                     Text="Lanzar desempate" />
+                <VerticalStackLayout x:Name="ParticipanteActions" IsVisible="False" Spacing="12">
+                    <Border
+                        Padding="14" BackgroundColor="#FFF1C1" Stroke="#E6C85D"
+                        StrokeShape="RoundRectangle 16" StrokeThickness="1">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image HeightRequest="27" Source="sync_icon.png" WidthRequest="27" />
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label
+                                    FontAttributes="Bold" Text="Esperando al anfitrión" TextColor="#163832" />
+                                <Label
+                                    FontSize="10" Text="Puedes quedarte aquí; el próximo resultado aparecerá automáticamente."
+                                    TextColor="#6B7C78" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Button
+                        Clicked="SalirSala_Clicked" ContentLayout="Left,10" ImageSource="close_icon.png"
+                        Style="{StaticResource VaquitaDarkButton}"
+                        Text="Salir de la sala" />
+                </VerticalStackLayout>
+                <VerticalStackLayout x:Name="AnfitrionActions" IsVisible="False" Spacing="10">
+                    <Button
+                        Clicked="OtroJuego_Clicked" ContentLayout="Left,10" ImageSource="refresh_icon.png"
+                        Style="{StaticResource VaquitaButton}"
+                        Text="Intentar otro juego" />
+                    <Button
+                        Clicked="FinalizarSala_Clicked" ContentLayout="Left,10" ImageSource="close_icon.png"
+                        Style="{StaticResource VaquitaDarkButton}"
+                        Text="Finalizar la sala" />
+                </VerticalStackLayout>
                 <Button
-                    Clicked="Nueva_Clicked" ContentLayout="Left,10" ImageSource="refresh_icon.png"
-                    Style="{StaticResource VaquitaDarkButton}"
+                    x:Name="NuevaLocalButton" Clicked="NuevaLocal_Clicked" ContentLayout="Left,10"
+                    ImageSource="refresh_icon.png" Style="{StaticResource VaquitaDarkButton}"
                     Text="Nueva vaquita" />
                 <ActivityIndicator
                     x:Name="Cargando" IsRunning="False" IsVisible="False" />

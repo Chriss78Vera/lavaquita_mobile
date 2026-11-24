@@ -17,12 +17,26 @@
                 Padding="18" BackgroundColor="#E2E7FF" Stroke="#163832" StrokeShape="RoundRectangle 22"
                 StrokeThickness="2">
                 <VerticalStackLayout Spacing="12">
-                    <Image
-                        HeightRequest="150" Source="dice_big.png" WidthRequest="150" />
+                    <Grid x:Name="DiceStage" HeightRequest="170">
+                        <Image
+                            x:Name="DiceImage" HeightRequest="150" Source="dice_big.png"
+                            VerticalOptions="Center" WidthRequest="150" />
+                        <Border
+                            x:Name="RollingValuePanel" Padding="12,5" BackgroundColor="#163832"
+                            HorizontalOptions="Center" IsVisible="False" StrokeShape="RoundRectangle 99"
+                            StrokeThickness="0" TranslationY="65" VerticalOptions="Center">
+                            <Label
+                                x:Name="RollingValueLabel" FontAttributes="Bold" FontSize="18"
+                                Text="1" TextColor="#B8F340" />
+                        </Border>
+                    </Grid>
                     <Label Style="{StaticResource VaquitaEyebrow}" Text="UNA RONDA, UN GANADOR" />
                     <Label
                         x:Name="ReglaLabel" FontSize="13" HorizontalTextAlignment="Center" Text="El mayor número invita."
                         TextColor="#5064B1" />
+                    <Label
+                        x:Name="LanzandoLabel" FontAttributes="Bold" FontSize="13" HorizontalTextAlignment="Center"
+                        IsVisible="False" Text="Lanzando los dados..." TextColor="#163832" />
                 </VerticalStackLayout>
             </Border>
 

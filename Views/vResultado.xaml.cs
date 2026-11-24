@@ -11,7 +11,11 @@ public partial class vResultado : ContentPage
 
     public vResultado(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
     {
-        InitializeComponent(); _api = api; _session = session; _realtime = realtime; Mostrar();
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime;
+        ParticipanteActions.IsVisible = session.EsCompartida && !session.EsAnfitrion;
+        AnfitrionActions.IsVisible = session.EsCompartida && session.EsAnfitrion;
+        NuevaLocalButton.IsVisible = !session.EsCompartida;
+        Mostrar();
     }
 
     protected override void OnAppearing()
@@ -36,6 +40,7 @@ public partial class vResultado : ContentPage
 
     private void Realtime_SalaFinalizada(string mensaje) => MainThread.BeginInvokeOnMainThread(async () =>
     {
+        if (_session.EsAnfitrion) return;
         await DisplayAlertAsync("Sala finalizada", mensaje, "Aceptar");
         _session.Reiniciar();
         await Navigation.PopToRootAsync();
@@ -68,6 +73,10 @@ public partial class vResultado : ContentPage
             TipoResultado.Dados or TipoResultado.Empate => "dice_big.png",
             _ => "vaquita_mascot.png"
         };
+        TieEqualsBadge.IsVisible = result.Tipo == TipoResultado.Empate;
+        HeroImage.IsVisible = true;
+        ValorMaximoPanel.IsVisible = result.ValorMaximo.HasValue;
+        ValorMaximoLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
         foreach (var item in result.Detalles)
         {
             var row = new Grid
@@ -121,6 +130,7 @@ public partial class vResultado : ContentPage
                     Tipo = winners.Count > 1 ? TipoResultado.Empate : TipoResultado.Dados,
                     Titulo = winners.Count > 1 ? "¡Tenemos empate!" : "Los dados decidieron",
                     Subtitulo = winners.Count > 1 ? "Vuelvan a lanzar" : "Hoy invita",
+                    ValorMaximo = high,
                     Detalles = winners.Select(item => new DetallePago { ParticipanteId = item.person.Id, Nombre = item.person.Nombre, Dados = [item.roll], Descripcion = $"Resultado: {item.roll}" }).ToList()
                 };
             }
@@ -130,13 +140,67 @@ public partial class vResultado : ContentPage
         finally { Cargando.IsVisible = Cargando.IsRunning = false; }
     }
 
-    private async void Nueva_Clicked(object? sender, EventArgs e)
+    private async void OtroJuego_Clicked(object? sender, EventArgs e)
     {
-        if (_session.EsCompartida && _session.EsAnfitrion && !string.IsNullOrWhiteSpace(_session.CodigoSala))
+        try
         {
-            try { await _api.CerrarSalaAsync(_session.CodigoSala, _session.HostToken); }
-            catch { /* La sala también expirará automáticamente si no hay conexión. */ }
+            var sala = await _api.ObtenerSalaAsync(_session.CodigoSala);
+            _session.Participantes = sala.Participantes;
+            _session.Cuenta = sala.Cuenta;
         }
-        _session.Reiniciar(); await Navigation.PopToRootAsync();
+        catch (Exception error)
+        {
+            await DisplayAlertAsync("No se pudo actualizar", error.Message, "Aceptar");
+            return;
+        }
+        _session.UltimoResultado = null;
+        _session.UltimoEventoId = string.Empty;
+        var stack = Navigation.NavigationStack.ToList();
+        var juegosIndex = stack.FindLastIndex(page => page is vJuegos);
+        if (juegosIndex < 0)
+        {
+            await Navigation.PushAsync(new vJuegos(_api, _session, _realtime));
+            return;
+        }
+
+        foreach (var page in stack.Skip(juegosIndex + 1).SkipLast(1).ToList())
+            Navigation.RemovePage(page);
+        await Navigation.PopAsync();
+    }
+
+    private async void FinalizarSala_Clicked(object? sender, EventArgs e)
+    {
+        if (!await DisplayAlertAsync("Finalizar sala", "Todos los participantes saldrán de la sala.", "Finalizar", "Cancelar")) return;
+        Cargando.IsVisible = Cargando.IsRunning = true;
+        try
+        {
+            await _api.CerrarSalaAsync(_session.CodigoSala, _session.HostToken);
+            await (_realtime?.DesconectarAsync() ?? Task.CompletedTask);
+            _session.Reiniciar();
+            await Navigation.PopToRootAsync();
+        }
+        catch (Exception error) { await DisplayAlertAsync("No se pudo finalizar", error.Message, "Aceptar"); }
+        finally { Cargando.IsVisible = Cargando.IsRunning = false; }
+    }
+
+    private async void SalirSala_Clicked(object? sender, EventArgs e)
+    {
+        if (!await DisplayAlertAsync("Salir de la sala", "Dejarás de recibir los próximos resultados.", "Salir", "Cancelar")) return;
+        Cargando.IsVisible = Cargando.IsRunning = true;
+        try
+        {
+            await _api.SalirSalaAsync(_session.CodigoSala, _session.ParticipantToken);
+            await (_realtime?.DesconectarAsync() ?? Task.CompletedTask);
+            _session.Reiniciar();
+            await Navigation.PopToRootAsync();
+        }
+        catch (Exception error) { await DisplayAlertAsync("No se pudo salir", error.Message, "Aceptar"); }
+        finally { Cargando.IsVisible = Cargando.IsRunning = false; }
+    }
+
+    private async void NuevaLocal_Clicked(object? sender, EventArgs e)
+    {
+        _session.Reiniciar();
+        await Navigation.PopToRootAsync();
     }
 }

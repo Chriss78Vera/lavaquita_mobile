@@ -16,6 +16,7 @@ public class ResultadoJuego
     public string Titulo { get; set; } = string.Empty;
     public string Subtitulo { get; set; } = string.Empty;
     public List<DetallePago> Detalles { get; set; } = [];
+    public int? ValorMaximo { get; set; }
 }
 
 public class DetallePago
