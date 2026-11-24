@@ -19,7 +19,7 @@ public static class MauiProgram
         // Android Emulator accede al equipo anfitrión mediante 10.0.2.2.
         string apiUrl = DeviceInfo.Platform == DevicePlatform.Android
             ? "http://10.0.2.2:3000/"
-            : "http://localhost:3000/";
+            : "https://lcpf9c62-3000.use2.devtunnels.ms/";
         var apiUri = new Uri(apiUrl);
         builder.Services.AddSingleton(new HttpClient
         {
