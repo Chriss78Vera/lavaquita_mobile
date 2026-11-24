@@ -79,32 +79,33 @@ public partial class vResultado : ContentPage
     private async Task AnimarJuegoAsync(string type, CancellationToken token)
     {
         var isDice = type == "dice";
-        HeroImage.Source = isDice ? "dice_big.png" : "roulette.png";
-        HeroImage.IsVisible = true;
-        TieEqualsBadge.IsVisible = false;
-        HeroDiceValueLabel.IsVisible = isDice;
+        HeroImage.Source = "roulette.png";
+        HeroImage.IsVisible = !isDice;
+        HeroDiceFace.IsVisible = isDice;
+        HeroDiceFace.ShowEquals = false;
         ValorMaximoPanel.IsVisible = false;
         DetallesLayout.Children.Clear();
         DesempateButton.IsVisible = ParticipanteActions.IsVisible = AnfitrionActions.IsVisible = NuevaLocalButton.IsVisible = false;
         EyebrowLabel.Text = isDice ? "DADOS EN EL AIRE" : "LA RULETA ESTÁ GIRANDO";
         TituloLabel.Text = isDice ? "Lanzando los dados" : "Buscando a los valientes";
         SubtituloLabel.Text = "Todos en la sala lo están viendo";
+        VisualElement animatedHero = isDice ? HeroDiceFace : HeroImage;
 
         for (var index = 0; index < 12; index++)
         {
             token.ThrowIfCancellationRequested();
-            BackgroundColor = GameColorPalette.ForIndex(index);
-            if (isDice) HeroDiceValueLabel.Text = Random.Shared.Next(1, 7).ToString();
+            BackgroundColor = isDice ? DefaultPageColor : GameColorPalette.ForIndex(index);
+            if (isDice) HeroDiceFace.Value = Random.Shared.Next(1, 7);
             await Task.WhenAll(
-                HeroImage.RotateToAsync(HeroImage.Rotation + (isDice ? 95 : 150), 130, Easing.CubicInOut),
-                HeroImage.ScaleToAsync(index % 2 == 0 ? 1.1 : 0.94, 130, Easing.CubicInOut),
-                HeroImage.TranslateToAsync(isDice ? (index % 2 == 0 ? 14 : -14) : 0, isDice ? -12 : 0, 130, Easing.CubicInOut));
+                animatedHero.RotateToAsync(animatedHero.Rotation + (isDice ? 95 : 150), 130, Easing.CubicInOut),
+                animatedHero.ScaleToAsync(index % 2 == 0 ? 1.1 : 0.94, 130, Easing.CubicInOut),
+                animatedHero.TranslateToAsync(isDice ? (index % 2 == 0 ? 14 : -14) : 0, isDice ? -12 : 0, 130, Easing.CubicInOut));
         }
 
         await Task.WhenAll(
-            HeroImage.RotateToAsync(0, 150, Easing.CubicOut),
-            HeroImage.ScaleToAsync(1, 150, Easing.CubicOut),
-            HeroImage.TranslateToAsync(0, 0, 150, Easing.CubicOut));
+            animatedHero.RotateToAsync(0, 150, Easing.CubicOut),
+            animatedHero.ScaleToAsync(1, 150, Easing.CubicOut),
+            animatedHero.TranslateToAsync(0, 0, 150, Easing.CubicOut));
         BackgroundColor = DefaultPageColor;
     }
 
@@ -124,16 +125,16 @@ public partial class vResultado : ContentPage
             TipoResultado.Empate => "MUERTE SÚBITA",
             _ => "LOS DADOS DECIDIERON"
         };
+        var isDiceResult = result.Tipo is TipoResultado.Dados or TipoResultado.Empate;
         HeroImage.Source = result.Tipo switch
         {
             TipoResultado.Ruleta => "roulette.png",
-            TipoResultado.Dados or TipoResultado.Empate => "dice_big.png",
             _ => "vaquita_mascot.png"
         };
-        TieEqualsBadge.IsVisible = result.Tipo == TipoResultado.Empate;
-        HeroDiceValueLabel.IsVisible = result.Tipo == TipoResultado.Dados && result.ValorMaximo.HasValue;
-        HeroDiceValueLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
-        HeroImage.IsVisible = true;
+        HeroImage.IsVisible = !isDiceResult;
+        HeroDiceFace.IsVisible = isDiceResult;
+        HeroDiceFace.ShowEquals = result.Tipo == TipoResultado.Empate;
+        HeroDiceFace.Value = result.ValorMaximo ?? 1;
         ValorMaximoPanel.IsVisible = result.ValorMaximo.HasValue;
         ValorMaximoLabel.Text = result.ValorMaximo?.ToString() ?? string.Empty;
         foreach (var item in result.Detalles)

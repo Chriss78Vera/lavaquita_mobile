@@ -51,7 +51,7 @@ public partial class vDados : ContentPage
             LanzarButton.IsEnabled = true;
             Cargando.IsVisible = Cargando.IsRunning = false;
             LanzandoLabel.IsVisible = false;
-            RollingValueLabel.Text = "?";
+            DiceFaceView.Value = 1;
         }
     }
 
@@ -60,26 +60,26 @@ public partial class vDados : ContentPage
         var direction = 1;
         while (!token.IsCancellationRequested)
         {
-            RollingValueLabel.Text = Random.Shared.Next(1, 7).ToString();
+            DiceFaceView.Value = Random.Shared.Next(1, 7);
             await Task.WhenAll(
-                DiceImage.RotateToAsync(DiceImage.Rotation + (110 * direction), 120, Easing.CubicInOut),
-                DiceImage.TranslateToAsync(18 * direction, -22, 120, Easing.CubicOut),
-                DiceImage.ScaleToAsync(1.12, 120, Easing.CubicOut));
+                DiceFaceView.RotateToAsync(DiceFaceView.Rotation + (110 * direction), 120, Easing.CubicInOut),
+                DiceFaceView.TranslateToAsync(18 * direction, -22, 120, Easing.CubicOut),
+                DiceFaceView.ScaleToAsync(1.12, 120, Easing.CubicOut));
             token.ThrowIfCancellationRequested();
 
-            RollingValueLabel.Text = Random.Shared.Next(1, 7).ToString();
+            DiceFaceView.Value = Random.Shared.Next(1, 7);
             await Task.WhenAll(
-                DiceImage.RotateToAsync(DiceImage.Rotation + (140 * direction), 120, Easing.CubicInOut),
-                DiceImage.TranslateToAsync(-14 * direction, 8, 120, Easing.BounceOut),
-                DiceImage.ScaleToAsync(0.94, 120, Easing.CubicIn));
+                DiceFaceView.RotateToAsync(DiceFaceView.Rotation + (140 * direction), 120, Easing.CubicInOut),
+                DiceFaceView.TranslateToAsync(-14 * direction, 8, 120, Easing.BounceOut),
+                DiceFaceView.ScaleToAsync(0.94, 120, Easing.CubicIn));
             direction *= -1;
         }
     }
 
     private Task RestablecerDadoAsync() => Task.WhenAll(
-        DiceImage.RotateToAsync(0, 160, Easing.CubicOut),
-        DiceImage.TranslateToAsync(0, 0, 160, Easing.CubicOut),
-        DiceImage.ScaleToAsync(1, 160, Easing.CubicOut));
+        DiceFaceView.RotateToAsync(0, 160, Easing.CubicOut),
+        DiceFaceView.TranslateToAsync(0, 0, 160, Easing.CubicOut),
+        DiceFaceView.ScaleToAsync(1, 160, Easing.CubicOut));
 
     private static ResultadoJuego CrearResultadoLocal(IReadOnlyList<Participante> participantes)
     {

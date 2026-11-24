@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="LaVaquita.Controls.DiceFace" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls">
+    <Grid>
+        <Image Aspect="AspectFit" Source="dice_big.png" />
+        <Grid
+            HeightRequest="92" HorizontalOptions="Center" Rotation="-8" RowDefinitions="*,*,*"
+            TranslationY="-2" VerticalOptions="Center" WidthRequest="92"
+            ColumnDefinitions="*,*,*">
+            <shapes:Ellipse x:Name="PipTopLeft" Grid.Row="0" Grid.Column="0" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipTopRight" Grid.Row="0" Grid.Column="2" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipMiddleLeft" Grid.Row="1" Grid.Column="0" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipCenter" Grid.Row="1" Grid.Column="1" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipMiddleRight" Grid.Row="1" Grid.Column="2" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipBottomLeft" Grid.Row="2" Grid.Column="0" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+            <shapes:Ellipse x:Name="PipBottomRight" Grid.Row="2" Grid.Column="2" Fill="#163832" HeightRequest="16" WidthRequest="16" />
+        </Grid>
+        <Label
+            x:Name="NumericValueLabel" FontAttributes="Bold" FontSize="54" HorizontalTextAlignment="Center"
+            IsVisible="False" TextColor="#163832" VerticalTextAlignment="Center" />
+        <Label
+            x:Name="EqualsLabel" FontAttributes="Bold" FontSize="64" HorizontalTextAlignment="Center"
+            IsVisible="False" Text="=" TextColor="#163832" VerticalTextAlignment="Center" />
+    </Grid>
+</ContentView>
