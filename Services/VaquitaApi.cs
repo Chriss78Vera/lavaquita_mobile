@@ -11,6 +11,20 @@ public sealed class VaquitaApi(HttpClient httpClient)
     public string ObtenerUrlQr(string codigo) =>
         $"https://quickchart.io/qr?size=320&margin=2&text={Uri.EscapeDataString(codigo)}";
 
+    public async Task<bool> HealthCheckAsync(CancellationToken token = default)
+    {
+        try
+        {
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
+            timeout.CancelAfter(TimeSpan.FromSeconds(4));
+            using var response = await _http.GetAsync("health", timeout.Token);
+            if (!response.IsSuccessStatusCode) return false;
+            var json = await LeerAsync(response, timeout.Token);
+            return json.TryGetProperty("ok", out var ok) && ok.GetBoolean();
+        }
+        catch { return false; }
+    }
+
     public async Task<CredencialesSala> CrearSalaAsync(string nombre, string avatar)
     {
         using var response = await _http.PostAsJsonAsync("api/rooms", new { hostName = nombre, hostAvatar = avatar });

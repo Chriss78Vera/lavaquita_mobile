@@ -63,8 +63,9 @@
                 </VerticalStackLayout>
                 <Border
                     Padding="22,24,22,24" BackgroundColor="#FBFAF2" StrokeShape="RoundRectangle 30,30,0,0" StrokeThickness="0">
-                    <Grid>
-                        <VerticalStackLayout x:Name="OnlineOptions" Spacing="15">
+                    <VerticalStackLayout Spacing="14">
+                        <Grid>
+                            <VerticalStackLayout x:Name="OnlineOptions" Spacing="15">
                             <Button
                                 Clicked="CrearSala_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
                                 Style="{StaticResource VaquitaButton}"
@@ -83,33 +84,42 @@
                                 FontSize="11"
                                 Style="{StaticResource VaquitaSubtitle}"
                                 Text="Sin registro. Todos conectados." />
-                        </VerticalStackLayout>
+                            </VerticalStackLayout>
 
-                        <VerticalStackLayout
-                            x:Name="OfflineOptions" IsVisible="False" Spacing="16">
-                            <Border
-                                Padding="12" BackgroundColor="#FFF1C1" StrokeShape="RoundRectangle 14" StrokeThickness="0">
-                                <HorizontalStackLayout HorizontalOptions="Center" Spacing="9">
-                                    <Image
-                                        HeightRequest="24" Source="close_icon.png" WidthRequest="24" />
-                                    <VerticalStackLayout Spacing="0">
-                                        <Label
-                                            FontAttributes="Bold" FontSize="13" Text="Sin conexión a internet" TextColor="#163832" />
-                                        <Label
-                                            FontSize="10" Text="Las salas estarán disponibles al reconectarte" TextColor="#6B7C78" />
-                                    </VerticalStackLayout>
-                                </HorizontalStackLayout>
-                            </Border>
-                            <Button
-                                Clicked="ModoRapido_Clicked" ContentLayout="Top,8" FontSize="21" HeightRequest="104"
-                                ImageSource="receipt_icon.png"
-                                Style="{StaticResource VaquitaButton}"
-                                Text="MODO RÁPIDO" />
-                            <Label
-                                FontSize="12" HorizontalTextAlignment="Center" Text="Funciona completamente en este teléfono y no guarda datos."
-                                TextColor="#6B7C78" />
-                        </VerticalStackLayout>
-                    </Grid>
+                            <VerticalStackLayout
+                                x:Name="OfflineOptions" IsVisible="False" Spacing="16">
+                                <Button
+                                    Clicked="ModoRapido_Clicked" ContentLayout="Top,8" FontSize="21" HeightRequest="104"
+                                    ImageSource="receipt_icon.png"
+                                    Style="{StaticResource VaquitaButton}"
+                                    Text="MODO RÁPIDO" />
+                                <Label
+                                    FontSize="12" HorizontalTextAlignment="Center"
+                                    Text="Dados, ruleta y división funcionan sin internet y se guardan en este teléfono."
+                                    TextColor="#6B7C78" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border
+                            x:Name="ServiceStatusPanel" Padding="13" BackgroundColor="#FFE1DE" IsVisible="False"
+                            Stroke="#D94C42" StrokeShape="RoundRectangle 15" StrokeThickness="1">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Image HeightRequest="27" Source="close_icon.png" WidthRequest="27" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                    <Label
+                                        FontAttributes="Bold" FontSize="13" Text="Servicios tomando un descanso"
+                                        TextColor="#A82E28" />
+                                    <Label
+                                        FontSize="10" Text="El servidor se fue por un encebollado. Las salas paran un ratito, pero el modo rápido sigue de una."
+                                        TextColor="#A82E28" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                        <Button
+                            x:Name="ContinuarGuardadaButton" Clicked="ContinuarGuardada_Clicked"
+                            ContentLayout="Left,9" ImageSource="refresh_icon.png" IsVisible="False"
+                            Style="{StaticResource VaquitaSecondaryButton}"
+                            Text="Continuar última vaquita" />
+                    </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>

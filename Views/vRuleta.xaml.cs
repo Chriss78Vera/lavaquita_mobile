@@ -1,5 +1,6 @@
 using LaVaquita.Models;
 using LaVaquita.Services;
+using LaVaquita.Utils;
 
 namespace LaVaquita.Views;
 
@@ -8,18 +9,37 @@ public partial class vRuleta : ContentPage
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
     private readonly SalaRealtimeService? _realtime;
+    private readonly PartidaLocalStore? _localStore;
     private readonly int _maximo;
     private int _cantidad = 1;
 
-    public vRuleta(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
+    public vRuleta(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null, PartidaLocalStore? localStore = null)
     {
         InitializeComponent();
         _api = api;
         _session = session;
         _realtime = realtime;
+        _localStore = localStore;
         _maximo = Math.Max(1, session.Participantes.Count - 1);
         MaximoLabel.Text = $"de {_maximo}";
+        CrearColoresParticipantes();
         ActualizarCantidad();
+    }
+
+    private void CrearColoresParticipantes()
+    {
+        ParticipantesColoresLayout.Children.Clear();
+        for (var index = 0; index < _session.Participantes.Count; index++)
+        {
+            var participante = _session.Participantes[index];
+            ParticipantesColoresLayout.Children.Add(new Border
+            {
+                Margin = new Thickness(4), Padding = new Thickness(10, 6),
+                BackgroundColor = GameColorPalette.ForIndex(index), Stroke = Color.FromArgb("#163832"), StrokeThickness = 1,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 99 },
+                Content = new Label { Text = participante.Nombre, FontSize = 10, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#163832") }
+            });
+        }
     }
 
     private void Restar_Clicked(object? sender, EventArgs e)
@@ -46,12 +66,18 @@ public partial class vRuleta : ContentPage
     {
         GirarButton.IsEnabled = false;
         Cargando.IsVisible = Cargando.IsRunning = true;
+        NombreGirandoLabel.IsVisible = true;
+        using var animationCancellation = new CancellationTokenSource();
+        var animationTask = AnimarRuletaAsync(animationCancellation.Token);
         try
         {
-            _session.UltimoResultado = _session.EsCompartida
-                ? await _api.RuletaAsync(_session.CodigoSala, _session.HostToken, _cantidad)
-                : CrearResultadoLocal();
-            await Navigation.PushAsync(new vResultado(_api, _session, _realtime));
+            var resultTask = _session.EsCompartida
+                ? _api.RuletaAsync(_session.CodigoSala, _session.HostToken, _cantidad)
+                : Task.FromResult(CrearResultadoLocal());
+            _session.UltimoResultado = await resultTask;
+            await animationTask;
+            if (!_session.EsCompartida && _localStore is not null) await _localStore.GuardarAsync(_session);
+            await Navigation.PushAsync(new vResultado(_api, _session, _realtime, _localStore));
         }
         catch (Exception error)
         {
@@ -59,8 +85,26 @@ public partial class vRuleta : ContentPage
         }
         finally
         {
+            animationCancellation.Cancel();
+            try { await animationTask; } catch (OperationCanceledException) { }
+            BackgroundColor = Color.FromArgb("#FBFAF2");
+            RuletaImage.Rotation = 0;
+            NombreGirandoLabel.IsVisible = false;
             GirarButton.IsEnabled = true;
             Cargando.IsVisible = Cargando.IsRunning = false;
+        }
+    }
+
+    private async Task AnimarRuletaAsync(CancellationToken token)
+    {
+        var totalSteps = Math.Max(15, _session.Participantes.Count * 3);
+        for (var step = 0; step < totalSteps; step++)
+        {
+            token.ThrowIfCancellationRequested();
+            var participantIndex = step % _session.Participantes.Count;
+            BackgroundColor = GameColorPalette.ForIndex(participantIndex);
+            NombreGirandoLabel.Text = _session.Participantes[participantIndex].Nombre;
+            await RuletaImage.RotateToAsync(RuletaImage.Rotation + 150, (uint)(120 + (step * 4)), Easing.CubicInOut);
         }
     }
 

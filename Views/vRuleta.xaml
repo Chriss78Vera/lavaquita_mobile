@@ -48,7 +48,7 @@
                 Padding="16" BackgroundColor="#DDF8F4" StrokeShape="RoundRectangle 18" StrokeThickness="0">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                     <Image
-                        HeightRequest="78" Source="roulette.png" WidthRequest="78" />
+                        x:Name="RuletaImage" HeightRequest="78" Source="roulette.png" WidthRequest="78" />
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                         <Label
                             FontAttributes="Bold" FontSize="10" Text="TODOS SINCRONIZADOS" TextColor="#27736A" />
@@ -57,6 +57,14 @@
                     </VerticalStackLayout>
                 </Grid>
             </Border>
+
+            <Label Style="{StaticResource VaquitaEyebrow}" Text="COLORES DE LA BANDA" />
+            <FlexLayout
+                x:Name="ParticipantesColoresLayout" AlignItems="Center" Direction="Row"
+                JustifyContent="Center" Wrap="Wrap" />
+            <Label
+                x:Name="NombreGirandoLabel" FontAttributes="Bold" FontSize="18"
+                HorizontalTextAlignment="Center" IsVisible="False" TextColor="#163832" />
 
             <Button
                 x:Name="GirarButton" Clicked="Girar_Clicked" ContentLayout="Left,10" ImageSource="sparkles_icon.png"

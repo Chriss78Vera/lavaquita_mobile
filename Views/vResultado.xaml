@@ -31,13 +31,16 @@
                     <Image
                         x:Name="HeroImage" HeightRequest="180" HorizontalOptions="Center" Source="vaquita_mascot.png"
                         WidthRequest="180" />
+                    <Label
+                        x:Name="HeroDiceValueLabel" FontAttributes="Bold" FontSize="58"
+                        HorizontalTextAlignment="Center" IsVisible="False" TextColor="#163832"
+                        VerticalTextAlignment="Center" />
                     <Border
-                        x:Name="TieEqualsBadge" Padding="0" BackgroundColor="#F7F7F2" HeightRequest="82"
-                        HorizontalOptions="Center" IsVisible="False" Stroke="#163832"
-                        StrokeShape="RoundRectangle 22" StrokeThickness="4" VerticalOptions="Center"
+                        x:Name="TieEqualsBadge" Padding="0" BackgroundColor="Transparent" HeightRequest="82"
+                        HorizontalOptions="Center" IsVisible="False" StrokeThickness="0" VerticalOptions="Center"
                         WidthRequest="82">
                         <Label
-                            FontAttributes="Bold" FontSize="52" HorizontalTextAlignment="Center"
+                            FontAttributes="Bold" FontSize="64" HorizontalTextAlignment="Center"
                             Text="=" TextColor="#163832" VerticalTextAlignment="Center" />
                     </Border>
                 </Grid>
