@@ -7,7 +7,9 @@ public class AppSession
     public bool EsAnfitrion { get; set; }
     public string CodigoSala { get; set; } = string.Empty;
     public string HostToken { get; set; } = string.Empty;
+    public string ParticipantToken { get; set; } = string.Empty;
     public string NombreActual { get; set; } = string.Empty;
+    public string UltimoEventoId { get; set; } = string.Empty;
     public Cuenta Cuenta { get; set; } = new();
     public List<Participante> Participantes { get; set; } = [];
     public ResultadoJuego? UltimoResultado { get; set; }
@@ -16,7 +18,7 @@ public class AppSession
     {
         EsCompartida = false;
         EsAnfitrion = false;
-        CodigoSala = HostToken = NombreActual = string.Empty;
+        CodigoSala = HostToken = ParticipantToken = NombreActual = UltimoEventoId = string.Empty;
         Cuenta = new();
         Participantes = [];
         UltimoResultado = null;

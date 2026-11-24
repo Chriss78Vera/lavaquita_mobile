@@ -8,10 +8,11 @@ public partial class vJuegos : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService? _realtime;
 
-    public vJuegos(VaquitaApi api, AppSession session)
+    public vJuegos(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null)
     {
-        InitializeComponent(); _api = api; _session = session;
+        InitializeComponent(); _api = api; _session = session; _realtime = realtime;
         ResumenLabel.Text = $"Cuenta de {MoneyFormat.Format(session.Cuenta.Total, session.Cuenta.Moneda)} · {session.Participantes.Count} personas";
         DivisionHintLabel.Text = $"Aprox. {MoneyFormat.Format(session.Cuenta.Total / Math.Max(1, session.Participantes.Count), session.Cuenta.Moneda)} por persona";
         if (session.EsCompartida && !session.EsAnfitrion)
@@ -22,9 +23,9 @@ public partial class vJuegos : ContentPage
 
     private async void Dividir_Clicked(object? sender, EventArgs e)
     {
-        if (_session.Participantes.Count <= 2)
+        if (_session.Participantes.Count < 2)
         {
-            await DisplayAlertAsync("Faltan participantes", "Para dividir la cuenta necesitas al menos 3 jugadores.", "Aceptar");
+            await DisplayAlertAsync("Faltan participantes", "Para dividir la cuenta necesitas al menos 2 personas.", "Aceptar");
             return;
         }
         await Ejecutar(async () =>
@@ -51,14 +52,14 @@ public partial class vJuegos : ContentPage
 
     private async void Ruleta_Clicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new vRuleta(_api, _session));
+        await Navigation.PushAsync(new vRuleta(_api, _session, _realtime));
     }
 
     private void RuletaCard_Tapped(object? sender, TappedEventArgs e) => Ruleta_Clicked(sender, e);
 
     private async void Dados_Clicked(object? sender, EventArgs e)
     {
-        await Navigation.PushAsync(new vDados(_api, _session));
+        await Navigation.PushAsync(new vDados(_api, _session, _realtime));
     }
 
     private void DadosCard_Tapped(object? sender, TappedEventArgs e) => Dados_Clicked(sender, e);
@@ -66,7 +67,7 @@ public partial class vJuegos : ContentPage
     private async Task Ejecutar(Func<Task> action)
     {
         Cargando.IsVisible = Cargando.IsRunning = true;
-        try { await action(); await Navigation.PushAsync(new vResultado(_api, _session)); }
+        try { await action(); await Navigation.PushAsync(new vResultado(_api, _session, _realtime)); }
         catch (Exception error) { await DisplayAlertAsync("No se pudo jugar", error.Message, "Aceptar"); }
         finally { Cargando.IsVisible = Cargando.IsRunning = false; }
     }

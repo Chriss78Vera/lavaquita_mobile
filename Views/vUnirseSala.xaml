@@ -18,7 +18,11 @@
             </Border>
             <Label Style="{StaticResource VaquitaEyebrow}" Text="YA TE ESTÁN ESPERANDO" />
             <Label Style="{StaticResource VaquitaTitle}" Text="Únete a la sala" />
-            <Label Style="{StaticResource VaquitaSubtitle}" Text="Escribe el código que compartió tu pana." />
+            <Label Style="{StaticResource VaquitaSubtitle}" Text="Escanea el QR o escribe el código que compartió tu pana." />
+            <Button
+                Clicked="EscanearQr_Clicked" ContentLayout="Left,10" ImageSource="camera_icon.png"
+                Style="{StaticResource VaquitaSecondaryButton}"
+                Text="Escanear código QR" />
             <Label
                 HorizontalTextAlignment="Start"
                 Style="{StaticResource VaquitaEyebrow}"

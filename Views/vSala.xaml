@@ -26,6 +26,7 @@
                 </Border>
             </Grid>
             <Label
+                x:Name="TituloSalaLabel"
                 HorizontalTextAlignment="Start"
                 Style="{StaticResource VaquitaTitle}"
                 Text="La banda se arma" />
@@ -33,7 +34,7 @@
                 x:Name="ConteoLabel" HorizontalTextAlignment="Start"
                 Style="{StaticResource VaquitaSubtitle}"
                 Text="Participantes conectados" />
-            <Border Style="{StaticResource VaquitaCard}">
+            <Border x:Name="QrPanel" Style="{StaticResource VaquitaCard}">
                 <VerticalStackLayout Spacing="8">
                     <Border Style="{StaticResource VaquitaPill}">
                         <HorizontalStackLayout Spacing="6">
@@ -68,11 +69,25 @@
                         HeightRequest="29" Source="sync_icon.png" WidthRequest="29" />
                     <VerticalStackLayout Grid.Column="1">
                         <Label
-                            FontAttributes="Bold" Text="Todo sincronizado" TextColor="#27736A" />
+                            x:Name="SyncTitleLabel" FontAttributes="Bold" Text="Conectando sala" TextColor="#27736A" />
                         <Label
-                            FontSize="10" Text="Los juegos empezarán para todos a la vez" TextColor="#27736A" />
+                            x:Name="SyncDetailLabel" FontSize="10" Text="Preparando actualizaciones en vivo" TextColor="#27736A" />
                     </VerticalStackLayout>
                 </Grid>
+            </Border>
+            <Border
+                x:Name="ParticipantePanel" Padding="18" BackgroundColor="#FFF1C1" IsVisible="False"
+                Stroke="#163832" StrokeShape="RoundRectangle 22" StrokeThickness="2">
+                <VerticalStackLayout Spacing="10">
+                    <Image HeightRequest="110" Source="vaquita_mascot.png" />
+                    <Label
+                        FontAttributes="Bold" FontSize="24" HorizontalTextAlignment="Center"
+                        Text="¡Ya estás dentro!" TextColor="#163832" />
+                    <Label
+                        x:Name="ParticipanteEsperaLabel" FontSize="13" HorizontalTextAlignment="Center"
+                        Text="Espera a que el anfitrión confirme la cuenta e inicie el juego."
+                        TextColor="#6B7C78" />
+                </VerticalStackLayout>
             </Border>
             <Border
                 x:Name="CuentaPanel" Padding="16" BackgroundColor="#DDF8F4" StrokeShape="RoundRectangle 22"

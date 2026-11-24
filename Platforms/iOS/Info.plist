@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>La Vaquita usa la cámara para fotografiar facturas y leer su total.</string>
+	<string>La Vaquita usa la cámara para escanear invitaciones QR y fotografiar facturas.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>La Vaquita permite elegir una factura de tu galería.</string>
 	<key>NSAppTransportSecurity</key>

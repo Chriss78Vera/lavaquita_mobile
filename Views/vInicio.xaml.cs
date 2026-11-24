@@ -7,17 +7,20 @@ public partial class vInicio : ContentPage
 {
     private readonly VaquitaApi _api;
     private readonly AppSession _session;
+    private readonly SalaRealtimeService _realtime;
 
-    public vInicio(VaquitaApi api, AppSession session)
+    public vInicio(VaquitaApi api, AppSession session, SalaRealtimeService realtime)
     {
         InitializeComponent();
         _api = api;
         _session = session;
+        _realtime = realtime;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        _ = _realtime.DesconectarAsync();
         _session.Reiniciar();
         Connectivity.Current.ConnectivityChanged += Connectivity_Changed;
         ActualizarOpcionesDeConexion();
@@ -42,13 +45,13 @@ public partial class vInicio : ContentPage
     private async void CrearSala_Clicked(object? sender, EventArgs e)
     {
         if (!await VerificarInternetAsync()) return;
-        await Navigation.PushAsync(new vCrearSala(_api, _session));
+        await Navigation.PushAsync(new vCrearSala(_api, _session, _realtime));
     }
 
     private async void Unirse_Clicked(object? sender, EventArgs e)
     {
         if (!await VerificarInternetAsync()) return;
-        await Navigation.PushAsync(new vUnirseSala(_api, _session));
+        await Navigation.PushAsync(new vUnirseSala(_api, _session, _realtime));
     }
 
     private async void ModoRapido_Clicked(object? sender, EventArgs e) => await Navigation.PushAsync(new vModoRapido(_api, _session));
