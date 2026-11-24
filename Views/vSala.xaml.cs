@@ -118,6 +118,7 @@ public partial class vSala : ContentPage
 
     private void Realtime_SalaFinalizada(string mensaje) => MainThread.BeginInvokeOnMainThread(async () =>
     {
+        if (_session.EsAnfitrion) return;
         await DisplayAlertAsync("Sala finalizada", mensaje, "Aceptar");
         _session.Reiniciar();
         await Navigation.PopToRootAsync();
