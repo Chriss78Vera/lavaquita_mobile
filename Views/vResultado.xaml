@@ -2,6 +2,7 @@
 <ContentPage
     x:Class="LaVaquita.Views.vResultado" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LaVaquita.Controls"
     xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls" Title="Resultado"
     Style="{StaticResource VaquitaPage}">
     <Grid>
@@ -31,18 +32,9 @@
                     <Image
                         x:Name="HeroImage" HeightRequest="180" HorizontalOptions="Center" Source="vaquita_mascot.png"
                         WidthRequest="180" />
-                    <Label
-                        x:Name="HeroDiceValueLabel" FontAttributes="Bold" FontSize="58"
-                        HorizontalTextAlignment="Center" IsVisible="False" TextColor="#163832"
-                        VerticalTextAlignment="Center" />
-                    <Border
-                        x:Name="TieEqualsBadge" Padding="0" BackgroundColor="Transparent" HeightRequest="82"
-                        HorizontalOptions="Center" IsVisible="False" StrokeThickness="0" VerticalOptions="Center"
-                        WidthRequest="82">
-                        <Label
-                            FontAttributes="Bold" FontSize="64" HorizontalTextAlignment="Center"
-                            Text="=" TextColor="#163832" VerticalTextAlignment="Center" />
-                    </Border>
+                    <controls:DiceFace
+                        x:Name="HeroDiceFace" HeightRequest="180" HorizontalOptions="Center"
+                        IsVisible="False" VerticalOptions="Center" WidthRequest="180" />
                 </Grid>
                 <Border Style="{StaticResource VaquitaPill}">
                     <Label
