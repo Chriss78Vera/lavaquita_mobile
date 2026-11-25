@@ -4,9 +4,16 @@ using LaVaquita.Models;
 
 namespace LaVaquita.Services;
 
-public sealed class VaquitaApi(HttpClient httpClient)
+public sealed class VaquitaApi(HttpClient httpClient) : IDisposable
 {
     private readonly HttpClient _http = httpClient;
+    private readonly HttpClient _ocrHttp = new()
+    {
+        BaseAddress = httpClient.BaseAddress,
+        Timeout = TimeSpan.FromSeconds(100)
+    };
+
+    public void Dispose() => _ocrHttp.Dispose();
 
     public string ObtenerUrlQr(string codigo) =>
         $"https://quickchart.io/qr?size=320&margin=2&text={Uri.EscapeDataString(codigo)}";
@@ -180,7 +187,7 @@ public sealed class VaquitaApi(HttpClient httpClient)
         var imageContent = new StreamContent(image);
         imageContent.Headers.ContentType = new("image/jpeg");
         content.Add(imageContent, "image", fileName);
-        using var response = await _http.PostAsync("api/ocr/total", content);
+        using var response = await _ocrHttp.PostAsync("api/ocr/total", content);
         var json = await LeerAsync(response);
         return new OcrResult
         {
