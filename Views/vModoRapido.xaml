@@ -2,7 +2,20 @@
 <ContentPage
     x:Class="LaVaquita.Views.vModoRapido" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Modo rápido"
+    xmlns:controls="clr-namespace:LaVaquita.Controls"
+    xmlns:models="clr-namespace:LaVaquita.Models"
+    xmlns:views="clr-namespace:LaVaquita.Views"
     Style="{StaticResource VaquitaPage}">
+    <ContentPage.Resources>
+        <Style x:Key="BotonParticipante" TargetType="Button" BasedOn="{StaticResource VaquitaSecondaryButton}">
+            <Setter Property="HeightRequest" Value="44" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="CornerRadius" Value="11" />
+            <Setter Property="Shadow" Value="{x:Null}" />
+        </Style>
+    </ContentPage.Resources>
     <ScrollView>
         <VerticalStackLayout
             Padding="22,18,22,36" HorizontalOptions="Center" MaximumWidthRequest="560" Spacing="16">
@@ -29,15 +42,40 @@
                             <Label
                                 FontAttributes="Bold" FontSize="18" Text="Participantes" TextColor="#163832" />
                             <Label
-                                FontSize="11" Text="De 2 a 10 personas, separadas por coma" TextColor="#6B7C78" />
+                                x:Name="ConteoParticipantesLabel"
+                                FontSize="11" Text="De 2 a 10 personas" TextColor="#6B7C78" />
                         </VerticalStackLayout>
                     </Grid>
-                    <Border Style="{StaticResource VaquitaInputBorder}">
-                        <Entry
-                            x:Name="NombresEntry"
-                            Style="{StaticResource VaquitaEntry}"
-                            Text="Ana, Mateo, Sofi, Diego" />
-                    </Border>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Border Style="{StaticResource VaquitaInputBorder}">
+                            <Entry
+                                x:Name="NombreEntry" Completed="AgregarNombre" ReturnType="Done"
+                                Placeholder="Nombre o apodo" Style="{StaticResource VaquitaEntry}" />
+                        </Border>
+                        <Button
+                            Grid.Column="1" Clicked="AgregarNombre"
+                            Style="{StaticResource BotonParticipante}" Text="Añadir" />
+                    </Grid>
+                    <Label
+                        x:Name="NombresAvisoLabel" IsVisible="False" FontSize="13" TextColor="#A12727" />
+                    <ScrollView x:Name="ScrollParticipantes" IsVisible="False" Orientation="Neither">
+                        <VerticalStackLayout x:Name="ListaParticipantes" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:Participante">
+                                    <Grid
+                                        ColumnDefinitions="*,Auto" ColumnSpacing="8" Padding="0,0,8,0"
+                                        HeightRequest="{x:Static views:vModoRapido.AltoFilaParticipante}">
+                                        <Label
+                                            FontSize="15" Text="{Binding Nombre}" TextColor="#163832"
+                                            LineBreakMode="TailTruncation" MaxLines="1" VerticalTextAlignment="Center" />
+                                        <Button
+                                            Grid.Column="1" Clicked="QuitarNombre" CommandParameter="{Binding .}"
+                                            Style="{StaticResource BotonParticipante}" Text="Quitar" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </ScrollView>
                 </VerticalStackLayout>
             </Border>
             <Border BackgroundColor="#FFF1C1" Style="{StaticResource VaquitaCard}">
@@ -60,7 +98,7 @@
                             <Label
                                 Margin="6,0" FontSize="25" Text="$" TextColor="#163832"
                                 VerticalTextAlignment="Center" />
-                            <Entry
+                            <controls:MontoEntry
                                 x:Name="TotalEntry" Grid.Column="1" FontSize="24" Keyboard="Numeric"
                                 Placeholder="84.60"
                                 Style="{StaticResource VaquitaEntry}" />

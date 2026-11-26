@@ -16,15 +16,15 @@ public partial class vRevisarCuenta : ContentPage
         _api = api;
         _session = session;
         _cuenta = cuenta;
-        TotalEntry.Text = cuenta.Total.ToString("N2", MoneyFormat.UnitedStates);
+        TotalEntry.Text = cuenta.Total.ToString("F2", MoneyFormat.UnitedStates);
         ConfianzaLabel.Text = $"Confianza de lectura: {cuenta.ConfianzaOcr:P0}";
     }
 
     private async void Confirmar_Clicked(object? sender, EventArgs e)
     {
-        if (!MoneyFormat.TryParse(TotalEntry.Text, out var total) || total <= 0)
+        if (!MoneyFormat.TryParse(TotalEntry.Text, out var total))
         {
-            await DisplayAlertAsync("Monto inválido", "Ingresa un total mayor que cero.", "Aceptar");
+            await DisplayAlertAsync("Monto inválido", MoneyFormat.MensajeMontoInvalido, "Aceptar");
             return;
         }
 

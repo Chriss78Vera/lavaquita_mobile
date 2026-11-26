@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="LaVaquita.Views.vRevisarCuenta" xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" Title="Revisar cuenta"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:LaVaquita.Controls" Title="Revisar cuenta"
     Style="{StaticResource VaquitaPage}">
     <ScrollView>
         <VerticalStackLayout
@@ -30,7 +31,7 @@
                             <Label
                                 Margin="5,0" FontAttributes="Bold" FontSize="25" Text="$"
                                 TextColor="#163832" VerticalTextAlignment="Center" />
-                            <Entry
+                            <controls:MontoEntry
                                 x:Name="TotalEntry" Grid.Column="1" FontSize="27" HorizontalTextAlignment="Center"
                                 Keyboard="Numeric"
                                 Style="{StaticResource VaquitaEntry}" />

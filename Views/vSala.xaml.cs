@@ -298,8 +298,8 @@ public partial class vSala : ContentPage
     private async void ConfirmarTotal_Clicked(object? sender, EventArgs e)
     {
         if (_lecturaFactura is not null) return;
-        if (!MoneyFormat.TryParse(TotalEntry.Text, out var total) || total <= 0)
-        { await DisplayAlertAsync("Monto inválido", "Ingresa un total mayor que cero.", "Aceptar"); return; }
+        if (!MoneyFormat.TryParse(TotalEntry.Text, out var total))
+        { await DisplayAlertAsync("Monto inválido", MoneyFormat.MensajeMontoInvalido, "Aceptar"); return; }
         _session.Cuenta = new Cuenta { Total = total, Moneda = "USD" };
         await GuardarCuenta();
     }

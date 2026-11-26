@@ -5,6 +5,19 @@
     xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls" Title="La Vaquita"
     NavigationPage.HasNavigationBar="False"
     Style="{StaticResource VaquitaPage}">
+    <ContentPage.Resources>
+        <Style x:Key="AccionInicioSecundaria" TargetType="Button">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="BorderColor" Value="#27736A" />
+            <Setter Property="BorderWidth" Value="1" />
+            <Setter Property="CornerRadius" Value="13" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="LineBreakMode" Value="WordWrap" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="TextColor" Value="#163832" />
+        </Style>
+    </ContentPage.Resources>
     <Grid BackgroundColor="#D9F3EC">
         <shapes:Ellipse
             Fill="#F4FFBE" HeightRequest="260" HorizontalOptions="Start" Opacity="0.8"
@@ -65,34 +78,41 @@
                     Padding="22,24,22,24" BackgroundColor="#FBFAF2" StrokeShape="RoundRectangle 30,30,0,0" StrokeThickness="0">
                     <VerticalStackLayout Spacing="14">
                         <Grid>
-                            <VerticalStackLayout x:Name="OnlineOptions" Spacing="15">
-                            <Button
-                                Clicked="CrearSala_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
-                                Style="{StaticResource VaquitaButton}"
-                                Text="Crear una sala" />
-                            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
+                            <VerticalStackLayout x:Name="OnlineOptions" Spacing="12">
                                 <Button
-                                    BackgroundColor="Transparent" Clicked="Unirse_Clicked" FontAttributes="Bold" Text="Unirme con código"
-                                    TextColor="#163832" />
+                                    Clicked="CrearSala_Clicked" ContentLayout="Left,10" ImageSource="people_icon.png"
+                                    Style="{StaticResource VaquitaButton}" Text="Crear una sala" />
+                                <Button
+                                    BackgroundColor="#DDF8F4" Clicked="Unirse_Clicked"
+                                    ContentLayout="Left,8" ImageSource="arrow_right.png"
+                                    Style="{StaticResource AccionInicioSecundaria}" Text="Unirme con código" />
+                                <Button
+                                    BackgroundColor="#FFF1C1" Clicked="ModoRapido_Clicked"
+                                    ContentLayout="Left,8" ImageSource="dice_icon.png"
+                                    Style="{StaticResource AccionInicioSecundaria}" Text="Modo rápido" />
                                 <Label
-                                    Grid.Column="1" Text="•" TextColor="#6B7C78" VerticalTextAlignment="Center" />
-                                <Button
-                                    Grid.Column="2" BackgroundColor="Transparent" Clicked="ModoRapido_Clicked" FontAttributes="Bold"
-                                    Text="Modo rápido" TextColor="#163832" />
-                            </Grid>
-                            <Label
-                                FontSize="11"
-                                Style="{StaticResource VaquitaSubtitle}"
-                                Text="Sin registro. Todos conectados." />
+                                    FontSize="11" Style="{StaticResource VaquitaSubtitle}"
+                                    Text="Sin registro. Todos conectados." />
                             </VerticalStackLayout>
 
                             <VerticalStackLayout
                                 x:Name="OfflineOptions" IsVisible="False" Spacing="16">
-                                <Button
-                                    Clicked="ModoRapido_Clicked" ContentLayout="Top,8" FontSize="21" HeightRequest="104"
-                                    ImageSource="receipt_icon.png"
-                                    Style="{StaticResource VaquitaButton}"
-                                    Text="MODO RÁPIDO" />
+                                <Grid>
+                                    <Button
+                                        Clicked="ModoRapido_Clicked" HeightRequest="-1" MinimumHeightRequest="72"
+                                        SemanticProperties.Description="{Binding Text, Source={x:Reference ModoRapidoSinConexionLabel}, x:DataType=Label}"
+                                        Style="{StaticResource VaquitaButton}" />
+                                    <Grid
+                                        AutomationProperties.ExcludedWithChildren="True" ColumnDefinitions="*,Auto"
+                                        ColumnSpacing="12" InputTransparent="True" Padding="20,12">
+                                        <Label
+                                            x:Name="ModoRapidoSinConexionLabel" FontAttributes="Bold" FontSize="21"
+                                            Text="Modo rápido" TextColor="#163832" VerticalTextAlignment="Center" />
+                                        <Image
+                                            Grid.Column="1" HeightRequest="34" WidthRequest="34"
+                                            Source="receipt_icon.png" VerticalOptions="Center" />
+                                    </Grid>
+                                </Grid>
                                 <Label
                                     FontSize="12" HorizontalTextAlignment="Center"
                                     Text="Dados, ruleta y división funcionan sin internet y se guardan en este teléfono."
@@ -116,7 +136,8 @@
                         </Border>
                         <Button
                             x:Name="ContinuarGuardadaButton" Clicked="ContinuarGuardada_Clicked"
-                            ContentLayout="Left,9" ImageSource="refresh_icon.png" IsVisible="False"
+                            ContentLayout="Left,9" HeightRequest="-1" ImageSource="refresh_icon.png" IsVisible="False"
+                            LineBreakMode="WordWrap" MinimumHeightRequest="58" Padding="12,8"
                             Style="{StaticResource VaquitaSecondaryButton}"
                             Text="Continuar última vaquita" />
                     </VerticalStackLayout>
