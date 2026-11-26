@@ -13,6 +13,9 @@ public partial class vSala : ContentPage
     private Sala? _sala;
     private bool _eventosSuscritos;
     private bool _navegandoResultado;
+    private bool _seleccionandoFactura;
+    private CancellationTokenSource? _lecturaFactura;
+    private const string AnimacionFactura = "EscaneoFactura";
 
     public vSala(VaquitaApi api, AppSession session, SalaRealtimeService realtime)
     {
@@ -37,6 +40,8 @@ public partial class vSala : ContentPage
 
     protected override void OnDisappearing()
     {
+        _lecturaFactura?.Cancel();
+        LineaOcr.AbortAnimation(AnimacionFactura);
         _polling?.Cancel();
         DesuscribirEventos();
         base.OnDisappearing();
@@ -204,6 +209,12 @@ public partial class vSala : ContentPage
 
     private async Task SeleccionarFactura(bool camara)
     {
+        if (_seleccionandoFactura || _lecturaFactura is not null) return;
+
+        _seleccionandoFactura = true;
+        AvisoOcrLabel.IsVisible = false;
+        CancellationTokenSource? lectura = null;
+        Cuenta? cuentaDetectada = null;
         try
         {
             FileResult? foto;
@@ -221,19 +232,71 @@ public partial class vSala : ContentPage
                     : (await MediaPicker.Default.PickPhotosAsync()).FirstOrDefault();
             }
             if (foto is null) return;
-            Cargando.IsVisible = Cargando.IsRunning = true;
+
+            lectura = _lecturaFactura = new CancellationTokenSource();
+            MostrarLecturaFactura(true);
             await using var stream = await foto.OpenReadAsync();
-            var ocr = await _api.LeerFacturaAsync(stream, foto.FileName);
-            var cuentaDetectada = new Cuenta { Total = ocr.Total, Moneda = ocr.Currency, FueDetectadaPorOcr = true, ConfianzaOcr = ocr.Confidence };
-            await Navigation.PushAsync(new vRevisarCuenta(_api, _session, cuentaDetectada));
+            var ocr = await _api.LeerFacturaAsync(stream, foto.FileName, lectura.Token);
+            lectura.Token.ThrowIfCancellationRequested();
+            cuentaDetectada = new Cuenta
+            {
+                Total = ocr.Total,
+                Moneda = ocr.Currency,
+                FueDetectadaPorOcr = true,
+                ConfianzaOcr = ocr.Confidence
+            };
         }
-        catch (PermissionException) { await DisplayAlertAsync("Permiso rechazado", "Puedes usar la galería o escribir el total.", "Aceptar"); }
-        catch (Exception error) { await DisplayAlertAsync("No se pudo leer", error.Message, "Aceptar"); }
-        finally { Cargando.IsVisible = Cargando.IsRunning = false; }
+        catch (OperationCanceledException) when (lectura?.IsCancellationRequested == true) { }
+        catch (Exception error) when (error is OperationCanceledException or TimeoutException)
+        {
+            MostrarAvisoOcr("La lectura tardó demasiado. Puedes ingresar el monto manualmente.");
+        }
+        catch (PermissionException)
+        {
+            MostrarAvisoOcr("No se concedió el permiso. Puedes elegir una foto o ingresar el monto manualmente.");
+        }
+        catch (Exception)
+        {
+            MostrarAvisoOcr("El OCR no está disponible por el momento. Puedes ingresar el monto manualmente.");
+        }
+        finally
+        {
+            _seleccionandoFactura = false;
+            if (lectura is not null)
+            {
+                _lecturaFactura = null;
+                lectura.Dispose();
+                MostrarLecturaFactura(false);
+            }
+        }
+
+        if (cuentaDetectada is not null)
+            await Navigation.PushAsync(new vRevisarCuenta(_api, _session, cuentaDetectada));
+    }
+
+    private void MostrarLecturaFactura(bool leyendo)
+    {
+        OpcionesOcr.IsVisible = !leyendo;
+        MontoManualPanel.IsEnabled = !leyendo;
+        AyudaFacturaLabel.Text = leyendo ? "Leyendo la factura…" : "Escanea la factura o escríbelo tú.";
+        LineaOcr.AbortAnimation(AnimacionFactura);
+        LineaOcr.TranslationY = leyendo ? 45 : 3;
+        if (!leyendo) return;
+
+        new Animation(valor => LineaOcr.TranslationY = valor, 45, -48, Easing.Linear)
+            .Commit(LineaOcr, AnimacionFactura, length: 1500,
+                repeat: () => _lecturaFactura is { IsCancellationRequested: false });
+    }
+
+    private void MostrarAvisoOcr(string mensaje)
+    {
+        AvisoOcrLabel.Text = mensaje;
+        AvisoOcrLabel.IsVisible = true;
     }
 
     private async void ConfirmarTotal_Clicked(object? sender, EventArgs e)
     {
+        if (_lecturaFactura is not null) return;
         if (!MoneyFormat.TryParse(TotalEntry.Text, out var total) || total <= 0)
         { await DisplayAlertAsync("Monto inválido", "Ingresa un total mayor que cero.", "Aceptar"); return; }
         _session.Cuenta = new Cuenta { Total = total, Moneda = "USD" };
