@@ -8,6 +8,10 @@ public sealed class SalaRealtimeService(Uri serverUri)
     private readonly Uri _serverUri = serverUri;
     private SocketIO? _socket;
     private string _codigoSala = string.Empty;
+    private volatile bool _salaConfirmada;
+    private ResultadoRecibido? _ultimoJuego;
+
+    private sealed record ResultadoRecibido(JsonElement Datos);
 
     public event Action? SalaActualizada;
     public event Action<JsonElement>? JuegoRecibido;
@@ -15,7 +19,8 @@ public sealed class SalaRealtimeService(Uri serverUri)
     public event Action<string>? SalaFinalizada;
     public event Action<bool>? ConexionCambiada;
 
-    public bool EstaConectado => _socket?.Connected == true;
+    public bool EstaConectado => _salaConfirmada && _socket?.Connected == true;
+    public JsonElement? UltimoJuego => Volatile.Read(ref _ultimoJuego)?.Datos;
 
     public async Task ConectarAsync(string codigoSala)
     {
@@ -24,7 +29,7 @@ public sealed class SalaRealtimeService(Uri serverUri)
 
         await DesconectarAsync();
         _codigoSala = codigoSala;
-        _socket = new SocketIO(_serverUri, new SocketIOOptions
+        var socket = _socket = new SocketIO(_serverUri, new SocketIOOptions
         {
             Reconnection = true,
             ReconnectionAttempts = int.MaxValue,
@@ -32,13 +37,22 @@ public sealed class SalaRealtimeService(Uri serverUri)
             ConnectionTimeout = TimeSpan.FromSeconds(15)
         });
 
-        _socket.OnConnected += async (_, _) =>
+        socket.OnConnected += async (_, _) =>
         {
-            ConexionCambiada?.Invoke(true);
-            await SuscribirseAsync();
-            SalaActualizada?.Invoke();
+            try
+            {
+                await SuscribirseAsync(socket, codigoSala);
+            }
+            catch (Exception error)
+            {
+                System.Diagnostics.Debug.WriteLine($"No se pudo confirmar la sala: {error.Message}");
+                if (ReferenceEquals(_socket, socket)) CambiarEstado(false);
+            }
         };
-        _socket.OnDisconnected += (_, _) => ConexionCambiada?.Invoke(false);
+        socket.OnDisconnected += (_, _) =>
+        {
+            if (ReferenceEquals(_socket, socket)) CambiarEstado(false);
+        };
         _socket.On("participant_joined", _ =>
         {
             SalaActualizada?.Invoke();
@@ -56,8 +70,12 @@ public sealed class SalaRealtimeService(Uri serverUri)
         });
         _socket.On("game_event", response =>
         {
-            var game = response.GetValue<JsonElement>(0).Clone();
-            JuegoRecibido?.Invoke(game);
+            if (ReferenceEquals(_socket, socket))
+            {
+                var game = response.GetValue<JsonElement>(0).Clone();
+                Volatile.Write(ref _ultimoJuego, new ResultadoRecibido(game));
+                JuegoRecibido?.Invoke(game);
+            }
             return Task.CompletedTask;
         });
         _socket.On("game_started", response =>
@@ -81,25 +99,55 @@ public sealed class SalaRealtimeService(Uri serverUri)
         await _socket.ConnectAsync();
     }
 
-    private Task SuscribirseAsync() =>
-        _socket is null || string.IsNullOrWhiteSpace(_codigoSala)
-            ? Task.CompletedTask
-            : _socket.EmitAsync("join_room", [_codigoSala]);
+    private Task SuscribirseAsync(SocketIO socket, string codigoSala)
+    {
+        var juegoAnterior = Volatile.Read(ref _ultimoJuego);
+        return socket.EmitAsync("join_room", [codigoSala], ack =>
+        {
+            if (!ReferenceEquals(_socket, socket) || !socket.Connected) return Task.CompletedTask;
+
+            var respuesta = ack.GetValue<JsonElement>(0);
+            var aceptada = respuesta.TryGetProperty("ok", out var ok) && ok.ValueKind == JsonValueKind.True;
+            CambiarEstado(aceptada);
+            if (!aceptada) return Task.CompletedTask;
+
+            if (respuesta.TryGetProperty("room", out var sala)
+                && sala.TryGetProperty("latestEvent", out var evento)
+                && evento.ValueKind == JsonValueKind.Object)
+            {
+                var recuperado = new ResultadoRecibido(evento.Clone());
+                var anterior = Interlocked.CompareExchange(ref _ultimoJuego, recuperado, juegoAnterior);
+                if (ReferenceEquals(anterior, juegoAnterior)) JuegoRecibido?.Invoke(recuperado.Datos);
+            }
+
+            SalaActualizada?.Invoke();
+            return Task.CompletedTask;
+        });
+    }
+
+    private void CambiarEstado(bool confirmada)
+    {
+        _salaConfirmada = confirmada;
+        ConexionCambiada?.Invoke(confirmada);
+    }
 
     public async Task DesconectarAsync()
     {
-        if (_socket is null) return;
+        var socket = _socket;
+        if (socket is null) return;
+
+        _socket = null;
+        _codigoSala = string.Empty;
+        Volatile.Write(ref _ultimoJuego, null);
+        CambiarEstado(false);
 
         try
         {
-            if (_socket.Connected) await _socket.DisconnectAsync();
+            if (socket.Connected) await socket.DisconnectAsync();
         }
         finally
         {
-            _socket.Dispose();
-            _socket = null;
-            _codigoSala = string.Empty;
-            ConexionCambiada?.Invoke(false);
+            socket.Dispose();
         }
     }
 }

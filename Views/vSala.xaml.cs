@@ -73,6 +73,7 @@ public partial class vSala : ContentPage
     {
         try
         {
+            Realtime_ConexionCambiada(_realtime.EstaConectado);
             await ActualizarSalaAsync();
             await _realtime.ConectarAsync(_session.CodigoSala);
         }

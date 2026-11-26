@@ -12,6 +12,8 @@ public partial class vResultado : ContentPage
     private readonly PartidaLocalStore? _localStore;
     private CancellationTokenSource? _gameAnimationCancellation;
     private Task _gameAnimationTask = Task.CompletedTask;
+    private bool _visible;
+    private int _revisionJuego;
     private static readonly Color DefaultPageColor = Color.FromArgb("#FBFAF2");
 
     public vResultado(VaquitaApi api, AppSession session, SalaRealtimeService? realtime = null, PartidaLocalStore? localStore = null)
@@ -26,6 +28,7 @@ public partial class vResultado : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        _visible = true;
         if (_session.EsCompartida && _realtime is not null)
         {
             _realtime.JuegoRecibido += Realtime_JuegoRecibido;
@@ -33,10 +36,14 @@ public partial class vResultado : ContentPage
             _realtime.SalaFinalizada += Realtime_SalaFinalizada;
         }
         if (!string.IsNullOrWhiteSpace(_session.JuegoEnCurso)) IniciarAnimacionJuego(_session.JuegoEnCurso);
+        if (_session.EsCompartida && !_session.EsAnfitrion && _realtime?.UltimoJuego is { } juego)
+            Realtime_JuegoRecibido(juego);
     }
 
     protected override void OnDisappearing()
     {
+        _visible = false;
+        _revisionJuego++;
         if (_realtime is not null)
         {
             _realtime.JuegoRecibido -= Realtime_JuegoRecibido;
@@ -55,13 +62,19 @@ public partial class vResultado : ContentPage
         await Navigation.PopToRootAsync();
     });
 
-    private void Realtime_JuegoIniciado(string type) => MainThread.BeginInvokeOnMainThread(() => IniciarAnimacionJuego(type));
+    private void Realtime_JuegoIniciado(string type) => MainThread.BeginInvokeOnMainThread(() =>
+    {
+        if (_visible) IniciarAnimacionJuego(type);
+    });
 
     private void Realtime_JuegoRecibido(System.Text.Json.JsonElement game) => MainThread.BeginInvokeOnMainThread(async () =>
     {
+        if (!_visible) return;
         var eventId = game.TryGetProperty("id", out var idNode) ? idNode.GetString() ?? string.Empty : string.Empty;
         if (!string.IsNullOrWhiteSpace(eventId) && eventId == _session.UltimoEventoId) return;
+        var revision = ++_revisionJuego;
         try { await _gameAnimationTask; } catch (OperationCanceledException) { }
+        if (!_visible || revision != _revisionJuego) return;
         _session.UltimoEventoId = eventId;
         _session.JuegoEnCurso = string.Empty;
         _session.UltimoResultado = _api.ConvertirEvento(game);
@@ -70,6 +83,7 @@ public partial class vResultado : ContentPage
 
     private void IniciarAnimacionJuego(string type)
     {
+        _revisionJuego++;
         _gameAnimationCancellation?.Cancel();
         _gameAnimationCancellation = new CancellationTokenSource();
         _session.JuegoEnCurso = type;
