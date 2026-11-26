@@ -93,13 +93,21 @@
                 x:Name="CuentaPanel" Padding="16" BackgroundColor="#DDF8F4" StrokeShape="RoundRectangle 22"
                 StrokeThickness="0">
                 <VerticalStackLayout Spacing="13">
-                    <Image
-                        Aspect="AspectFit" HeightRequest="145" Source="receipt_scan.png" />
+                    <Grid HeightRequest="145" HorizontalOptions="Center" WidthRequest="207">
+                        <Image Aspect="AspectFit" Source="receipt_ocr.png" />
+                        <Grid
+                            x:Name="LineaOcr" HeightRequest="10" HorizontalOptions="Center" InputTransparent="True"
+                            VerticalOptions="Center" WidthRequest="126">
+                            <BoxView Color="#FF694D" CornerRadius="1.5" HeightRequest="3" VerticalOptions="Center" />
+                            <BoxView Color="#FF694D" CornerRadius="5" HeightRequest="10" HorizontalOptions="Start" WidthRequest="10" />
+                            <BoxView Color="#FF694D" CornerRadius="5" HeightRequest="10" HorizontalOptions="End" WidthRequest="10" />
+                        </Grid>
+                    </Grid>
                     <Label
                         FontAttributes="Bold" FontSize="25" HorizontalTextAlignment="Center" Text="¿Cuánto fue?"
                         TextColor="#163832" />
-                    <Label Style="{StaticResource VaquitaSubtitle}" Text="Escanea la factura o escríbelo tú." />
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Label x:Name="AyudaFacturaLabel" Style="{StaticResource VaquitaSubtitle}" Text="Escanea la factura o escríbelo tú." />
+                    <Grid x:Name="OpcionesOcr" ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Border Padding="8" Style="{StaticResource VaquitaSoftCard}">
                             <Button
                                 BackgroundColor="Transparent" Clicked="Camara_Clicked" ContentLayout="Top,5" FontAttributes="Bold"
@@ -113,15 +121,18 @@
                                 ImageSource="gallery_icon.png" Text="Galería" TextColor="#163832" />
                         </Border>
                     </Grid>
+                    <Label
+                        x:Name="AvisoOcrLabel" FontSize="13" HorizontalTextAlignment="Center"
+                        IsVisible="False" TextColor="#9B3023" />
                     <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
                         <BoxView
                             HeightRequest="1" VerticalOptions="Center" Color="#BCD7D2" />
                         <Label
-                            Grid.Column="1" FontSize="10" Text="o manual" TextColor="#6B7C78" />
+                            Grid.Column="1" FontSize="10" Text="Monto manual" TextColor="#6B7C78" />
                         <BoxView
                             Grid.Column="2" HeightRequest="1" VerticalOptions="Center" Color="#BCD7D2" />
                     </Grid>
-                    <Border Style="{StaticResource VaquitaInputBorder}">
+                    <Border x:Name="MontoManualPanel" Style="{StaticResource VaquitaInputBorder}">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <Label
                                 Margin="5,0" FontAttributes="Bold" FontSize="25" Text="$"

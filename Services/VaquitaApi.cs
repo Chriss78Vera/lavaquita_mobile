@@ -181,14 +181,17 @@ public sealed class VaquitaApi(HttpClient httpClient) : IDisposable
         };
     }
 
-    public async Task<OcrResult> LeerFacturaAsync(Stream image, string fileName)
+    public async Task<OcrResult> LeerFacturaAsync(Stream image, string fileName, CancellationToken token = default)
     {
         using var content = new MultipartFormDataContent();
         var imageContent = new StreamContent(image);
         imageContent.Headers.ContentType = new("image/jpeg");
         content.Add(imageContent, "image", fileName);
-        using var response = await _ocrHttp.PostAsync("api/ocr/total", content);
-        var json = await LeerAsync(response);
+        using var response = await _ocrHttp.PostAsync("api/ocr/total", content, token);
+        if (response.StatusCode is System.Net.HttpStatusCode.GatewayTimeout or System.Net.HttpStatusCode.RequestTimeout)
+            throw new TimeoutException("Se agotó el tiempo de lectura de la factura.");
+
+        var json = await LeerAsync(response, token);
         return new OcrResult
         {
             Total = json.GetProperty("total").GetDecimal(),
